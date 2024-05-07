@@ -1,0 +1,17 @@
+name: Create Env
+description: Create Env
+
+inputs:
+  app_name:
+    required: true
+    description: app_name
+
+runs:
+  using: composite
+  steps:
+    - name: Create Env
+      shell: bash
+      run: ${{ github.action_path }}/action.sh
+      env:
+        GITHUB_REF_NAME: develop
+        APP_NAME: ${{ inputs.app_name }}
