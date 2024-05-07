@@ -29,7 +29,7 @@ runs:
       run: ${{ github.action_path }}/action.sh
       env:
         GITHUB_REF_NAME: ${{ inputs.ref_name }}
-        APP_NAME: ${{ inputs.app_name }}
+        APPNAME: ${{ inputs.app_name }}
         GOOGLE_PROJECTID: ${{ inputs.project_id}}
         MAX_INSTANCES: ${{ inputs.max_instances }}
         JKS_SAFE_IPS: ${{ inputs.safe_ips }}
