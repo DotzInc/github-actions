@@ -8,9 +8,6 @@ inputs:
   ref_name:
     required: true
     description: ref_name
-  environment:
-    required: true
-    description: environment
   project_id:
     required: true
     description: project_id
