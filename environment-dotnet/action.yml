@@ -8,6 +8,9 @@ inputs:
   ref_name:
     required: true
     description: ref_name
+  environment:
+    required: true
+    description: environment
   project_id:
     required: true
     description: project_id
@@ -29,6 +32,7 @@ runs:
       run: ${{ github.action_path }}/action.sh
       env:
         GITHUB_REF_NAME: ${{ inputs.ref_name }}
+        ENVIRONMENT: ${{ inputs.environment }}        
         APPNAME: ${{ inputs.app_name }}
         GOOGLE_PROJECTID: ${{ inputs.project_id}}
         MAX_INSTANCES: ${{ inputs.max_instances }}
