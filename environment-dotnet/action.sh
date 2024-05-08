@@ -8,7 +8,7 @@ if [ "$GITHUB_REF_NAME" = 'main' ]; then
 elif [ "$ENV" = 'staging' ]; then
     ENVIRONMENT='uat'
     ENVIRONMENT_ELK='uat'
-    ELASTIC_APM_SERVER_URL='http://10.221.0.114:8200'
+    ELASTIC_APM_SERVER_URL='http://10.204.0.112:8200'
     JWT_JWKS_PATH="https://uat.dotznext.com/accounts/api/default/"
 else
     ENVIRONMENT='dev'
