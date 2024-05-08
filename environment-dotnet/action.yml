@@ -32,7 +32,7 @@ runs:
       run: ${{ github.action_path }}/action.sh
       env:
         GITHUB_REF_NAME: ${{ inputs.ref_name }}
-        ENVIRONMENT: ${{ inputs.environment }}        
+        ENV: ${{ inputs.environment }}        
         APPNAME: ${{ inputs.app_name }}
         GOOGLE_PROJECTID: ${{ inputs.project_id}}
         MAX_INSTANCES: ${{ inputs.max_instances }}

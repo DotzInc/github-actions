@@ -5,10 +5,10 @@ if [ "$GITHUB_REF_NAME" = 'main' ]; then
     ENVIRONMENT_ELK='production'
     ELASTIC_APM_SERVER_URL='http://10.56.0.2:8200'
     JWT_JWKS_PATH="https://api.dotz.com.br/accounts/api/default/"
-elif [ "$ENVIRONMENT" = 'staging' ]; then
+elif [ "$ENV" = 'staging' ]; then
     ENVIRONMENT='uat'
     ENVIRONMENT_ELK='uat'
-    ELASTIC_APM_SERVER_URL='http://10.55.0.2:8200'
+    ELASTIC_APM_SERVER_URL='http://10.221.0.114:8200'
     JWT_JWKS_PATH="https://uat.dotznext.com/accounts/api/default/"
 else
     ENVIRONMENT='dev'
