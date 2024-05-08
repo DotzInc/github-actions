@@ -36,6 +36,7 @@ fi
     echo ELASTIC_APM_CAPTURE_BODY_CONTENT_TYPES: \'*\'
     echo ELASTIC_APM_CAPTURE_HEADERS: \'true\'
     echo JKS_USE_APM: \'true\'
+    echo PLATFORM: \'Clourun\'
     
 } > tmpfile
 
