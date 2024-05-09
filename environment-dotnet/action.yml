@@ -34,3 +34,4 @@ runs:
         MAX_INSTANCES: ${{ inputs.max_instances }}
         JKS_SAFE_IPS: ${{ inputs.safe_ips }}
         REGION: ${{ inputs.gcp_region }}
+        
