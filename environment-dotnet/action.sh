@@ -20,23 +20,23 @@ fi
 {
     echo ""
     if ! [ "$ENVIRONMENT" = "dev" ]; then
-        echo ELASTIC_APM_ENABLED: \'true\'
+        echo "ELASTIC_APM_ENABLED: 'true'"
     fi
-    echo JKS_ALTERNATIVE_HEADER_FORWARDED_FOR: \'X-Forwarded-For\'
-    echo JWT_JWKS_PATH: \'$JWT_JWKS_PATH\'
-    echo JKS_SAFE_IPS: \'"$JKS_SAFE_IPS"\'
-    echo JKS_GOOGLE_PROJECTID: \'"$GOOGLE_PROJECTID"\'
-    echo ELASTIC_APM_SERVER_URL: \'$ELASTIC_APM_SERVER_URL\'
-    echo APPNAME: \'"$APPNAME"\'
-    echo JKS_USE_ELASTIC_APM: \'false\'
-    echo ELASTIC_APM_RECORDING: \'true\'
-    echo ELASTIC_APM_SERVICE_NAME: \'"$APPNAME"\'
-    echo ELASTIC_APM_ENVIRONMENT: \'$ENVIRONMENT_ELK\'
-    echo ELASTIC_APM_CAPTURE_BODY: \'all\'
-    echo ELASTIC_APM_CAPTURE_BODY_CONTENT_TYPES: \'*\'
-    echo ELASTIC_APM_CAPTURE_HEADERS: \'true\'
-    echo JKS_USE_APM: \'true\'
-    echo PLATFORM: \'Cloudrun\'
+    echo "JKS_ALTERNATIVE_HEADER_FORWARDED_FOR: 'X-Forwarded-For'"
+    echo "JWT_JWKS_PATH: '$JWT_JWKS_PATH'"
+    echo "JKS_SAFE_IPS: '$JKS_SAFE_IPS'"
+    echo "JKS_GOOGLE_PROJECTID: '$GOOGLE_PROJECTID'"
+    echo "ELASTIC_APM_SERVER_URL: '$ELASTIC_APM_SERVER_URL'"
+    echo "APPNAME: '$APPNAME'"
+    echo "JKS_USE_ELASTIC_APM: 'false'"
+    echo "ELASTIC_APM_RECORDING: 'true'"
+    echo "ELASTIC_APM_SERVICE_NAME: '$APPNAME'"
+    echo "ELASTIC_APM_ENVIRONMENT: '$ENVIRONMENT_ELK'"
+    echo "ELASTIC_APM_CAPTURE_BODY: 'all'"
+    echo "ELASTIC_APM_CAPTURE_BODY_CONTENT_TYPES: '*'"
+    echo "ELASTIC_APM_CAPTURE_HEADERS: 'true'"
+    echo "JKS_USE_APM: 'true'"
+    echo "PLATFORM: 'Cloudrun'"
     
 } > tmpfile
 
