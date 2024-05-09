@@ -2,25 +2,15 @@ name: Create Env
 description: Create Env
 
 inputs:
-  app_name:
-    required: true
-    description: app_name
   ref_name:
     required: true
     description: ref_name
   project_id:
     required: true
     description: project_id
-  max_instances:
-    required: true
-    description: max_instances
   safe_ips:
     required: true
     description: safe_ips
-  gcp_region:
-    required: true
-    description: gcp_region
-
 runs:
   using: composite
   steps:
@@ -29,8 +19,5 @@ runs:
       run: ${{ github.action_path }}/action.sh
       env:
         GITHUB_REF_NAME: ${{ inputs.ref_name }}
-        APPNAME: ${{ inputs.app_name }}
         GOOGLE_PROJECTID: ${{ inputs.project_id}}
-        MAX_INSTANCES: ${{ inputs.max_instances }}
         JKS_SAFE_IPS: ${{ inputs.safe_ips }}
-        REGION: ${{ inputs.gcp_region }}
