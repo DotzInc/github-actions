@@ -6,15 +6,15 @@ if [ "$GITHUB_REF_NAME" = 'main' ]; then
     JWT_JWKS_PATH="https://api.dotz.com.br/accounts/api/default/"
 elif [ "$GITHUB_REF_NAME" = 'staging' ]; then
     ENVIRONMENT='uat'
-    ELASTIC_APM_SERVER_URL='http://10.204.0.112:8200'
+    ELASTIC_APM_SERVER_URL='http://10.55.0.2:8200'
     JWT_JWKS_PATH="https://uat.dotznext.com/accounts/api/default/"
 elif [ "$GITHUB_REF_NAME" = 'qa' ]; then
     ENVIRONMENT='uat'
-    ELASTIC_APM_SERVER_URL='http://10.204.0.112:8200'
+    ELASTIC_APM_SERVER_URL='http://10.55.0.2:8200'
     JWT_JWKS_PATH="https://uat.dotznext.com/accounts/api/default/"
 else
     ENVIRONMENT='dev'
-    ELASTIC_APM_SERVER_URL='http://10.221.0.114:8200'
+    ELASTIC_APM_SERVER_URL='http://10.54.0.2:8200'
     JWT_JWKS_PATH="https://uat.dotznext.com/accounts/api/default/"
 fi
 
