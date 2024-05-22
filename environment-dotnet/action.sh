@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ "$GITHUB_REF_NAME" = 'main' ] || [ "$GITHUB_REF_NAME" = 'feature/154724' ]; then
+if [ "$GITHUB_REF_NAME" = 'main' ]; then
     ENVIRONMENT='prd'
     ELASTIC_APM_SERVER_URL='http://10.56.0.2:8200'
     JWT_JWKS_PATH="https://api.dotz.com.br/accounts/api/default/"
