@@ -1,0 +1,9 @@
+name: Create Env
+description: Create Env
+
+runs:
+  using: composite
+  steps:
+    - name: Create Env Test
+      shell: bash
+      run: ${{ github.action_path }}/action.sh
