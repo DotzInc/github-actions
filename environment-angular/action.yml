@@ -1,0 +1,14 @@
+name: 'Update Environment Variables'
+description: 'Update environment variables in a file based on provided parameters'
+inputs:
+  env_file:
+    description: 'Path to the environment file'
+    required: true
+    default: 'path/to/environment.ts'
+
+runs:
+  using: composite
+  steps:
+    - name: Update Envs
+      shell: bash
+      run: ${{ github.action_path }}/action.sh
