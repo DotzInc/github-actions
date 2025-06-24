@@ -1,0 +1,16 @@
+name: Create a Tag
+description: Create Tag for Release
+
+runs:
+  using: composite
+  steps:
+    - name: Create New Tag
+      shell: bash
+      run: ${{ github.action_path }}/action.sh
+outputs:
+  new_tag:
+    description: 'Generated tag'
+  tag:
+    description: 'The latest tag after running this action'
+  part:
+    description: 'The part of version which was bumped'
