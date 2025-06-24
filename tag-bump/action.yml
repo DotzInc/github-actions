@@ -2,11 +2,8 @@ name: Create a Tag
 description: Create Tag for Release
 
 runs:
-  using: composite
-  steps:
-    - name: Create New Tag
-      shell: bash
-      run: ${{ github.action_path }}/action.sh
+  using: 'docker'
+  image: 'Dockerfile'
 outputs:
   new_tag:
     description: 'Generated tag'
