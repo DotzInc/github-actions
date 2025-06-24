@@ -4,4 +4,4 @@ RUN apk --no-cache add bash git git-lfs curl jq && npm install -g semver
 
 COPY action.sh /action.sh
 
-ENTRYPOINT ["${{ github.action_path }}/action.sh"]
+ENTRYPOINT ["/action.sh"]
