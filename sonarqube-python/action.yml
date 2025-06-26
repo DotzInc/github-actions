@@ -1,0 +1,98 @@
+name: 'Sonarqube Python Scanner'
+description: 'Quality Gate Sonarqube for Python projects'
+
+inputs:
+  sonar-verbose:
+    required: false
+    type: boolean
+    default: false
+  sonar-sources:
+    required: false
+    type: string
+    default: "src"
+  sonar-sources-tests:
+    required: false
+    type: string
+    default: "tests"
+  sonar-test-inclusions:
+    required: false
+    type: string
+    default: "**/test_*.py,**/*_test.py,**/__pycache__/**,**/__init__.py"
+  sonar-report-paths:
+    required: false
+    type: string
+    default: "coverage.xml"
+  sonar-source-encoding:
+    required: false
+    type: string
+    default: "UTF-8"
+  sonar-exclusions:
+    required: false
+    type: string
+    default: "**/__pycache__/**,**/*.pyc,**/migrations/**,**/fixtures/**,**/.venv/**,**/.git/**,**/.vscode/**,**/*.html,**/htmlcov/**,coverage.xml"
+  sonar-lang-version:
+    required: false
+    type: string
+    default: "3.11"
+  sonar-host-url:
+    required: true
+    type: string
+  sonar-api-token:
+    required: true
+    type: string
+  sonar-token:
+    required: true
+    type: string
+  sonar-project-key:
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@v5.2.0
+      continue-on-error: true
+      with:
+        args: >
+          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
+          -Dsonar.sources=${{ inputs.sonar-sources }}
+          -Dsonar.tests=${{ inputs.sonar-sources-tests }}
+          -Dsonar.test.inclusions=${{inputs.sonar-test-inclusions }}
+          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
+          -Dsonar.python.version=${{ inputs.sonar-lang-version }}
+          -Dsonar.python.coverage.reportPaths=${{ inputs.sonar-report-paths }}
+          -Dsonar.verbose=${{ inputs.sonar-verbose }}
+          -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
+      env:
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+
+    - name: Check SonarQube Quality Gate Status
+      id: sonarqube-status
+      shell: bash
+      continue-on-error: true
+      run: ${{ github.action_path }}/sonarqube-status.sh
+      env:
+        SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
+        SONAR_TOKEN: ${{ inputs.sonar-api-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+
+    - name: Get Coverage
+      shell: bash
+      id: coverage-calc
+      if: steps.sonarqube-status.outputs.status == 'OK'
+      continue-on-error: true
+      run: ${{ github.action_path }}/coverage-calc.sh
+
+    - name: Update Quality Gates Sonarqube
+      shell: bash
+      id: quality-gates-sonarqube
+      if: steps.sonarqube-status.outputs.status == 'OK'
+      continue-on-error: true
+      run: ${{ github.action_path }}/quality-gates-sonarqube.sh
+      env:
+        SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
+        SONAR_TOKEN: ${{ inputs.sonar-api-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+        LEGACY_COV_NUM: ${{ steps.coverage-calc.outputs.coverage }}
