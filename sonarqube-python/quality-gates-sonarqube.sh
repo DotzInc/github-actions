@@ -19,22 +19,22 @@ if [ -n "$NEW_COV_CONDITION_ID" ]; then
 
     if (( $(echo "$LEGACY_COV_NUM > $CURRENT_NEW_COV_NUM" | bc -l) )); then
         if (( $(echo "$LEGACY_COV_NUM > 80" | bc -l) )); then
-            echo "Legacy coverage ($LEGACY_COV_NUM%) > 80%, updating new_coverage threshold to 80%"
+            echo "Legacy coverage ($LEGACY_COV_NUM%) > 80%, updating coverage threshold to 80%"
             curl -u "$SONAR_TOKEN:" -X POST \
             "$SONAR_HOST_URL/api/qualitygates/update_condition" \
-            -d "id=$NEW_COV_CONDITION_ID&metric=new_coverage&op=LT&error=80"
+            -d "id=$NEW_COV_CONDITION_ID&metric=coverage&op=LT&error=80"
         else
-            echo "Updating new_coverage threshold from $CURRENT_NEW_COV to $LEGACY_COV_NUM%"
+            echo "Updating coverage threshold from $CURRENT_NEW_COV to $LEGACY_COV_NUM%"
             curl -u "$SONAR_TOKEN:" -X POST \
             "$SONAR_HOST_URL/api/qualitygates/update_condition" \
-            -d "id=$NEW_COV_CONDITION_ID&metric=new_coverage&op=LT&error=$LEGACY_COV_NUM"
+            -d "id=$NEW_COV_CONDITION_ID&metric=coverage&op=LT&error=$LEGACY_COV_NUM"
         fi
     else
-        echo "Legacy coverage ($LEGACY_COV_NUM%) not greater than current new_coverage ($CURRENT_NEW_COV), keeping existing configuration"
+        echo "Legacy coverage ($LEGACY_COV_NUM%) not greater than current coverage ($CURRENT_NEW_COV), keeping existing configuration"
     fi
 else
-    echo "Criando nova condição para new_coverage"
+    echo "Criando nova condição para coverage"
     curl -u "$SONAR_TOKEN:" -X POST \
     "$SONAR_HOST_URL/api/qualitygates/create_condition" \
-    -d "gateName=$QUALITY_GATE_NAME&metric=new_coverage&op=LT&error=$LEGACY_COV_NUM"
+    -d "gateName=$QUALITY_GATE_NAME&metric=coverage&op=LT&error=$LEGACY_COV_NUM"
 fi
