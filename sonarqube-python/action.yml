@@ -29,8 +29,7 @@ inputs:
   sonar-exclusions:
     required: false
     type: string
-    default: "**/__pycache__/**,**/*.pyc,**/migrations/**,
-    **/fixtures/**,**/.venv/**,**/.git/**,**/.vscode/**,**/*.html,**/htmlcov/**,coverage.xml"
+    default: "**/__pycache__/**,**/*.pyc,**/migrations/**,**/fixtures/**,**/.venv/**,**/.git/**,**/.vscode/**,**/*.html,**/htmlcov/**,coverage.xml"
   sonar-lang-version:
     required: false
     type: string
@@ -69,30 +68,30 @@ runs:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
 
-    # - name: Check SonarQube Quality Gate Status
-    #   id: sonarqube-status
-    #   shell: bash
-    #   continue-on-error: true
-    #   run: ${{ github.action_path }}/sonarqube-status.sh
-    #   env:
-    #     SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
-    #     SONAR_TOKEN: ${{ inputs.sonar-api-token }}
-    #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+    - name: Check SonarQube Quality Gate Status
+      id: sonarqube-status
+      shell: bash
+      continue-on-error: true
+      run: ${{ github.action_path }}/sonarqube-status.sh
+      env:
+        SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
+        SONAR_TOKEN: ${{ inputs.sonar-api-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
 
-    # - name: Get Coverage
-    #   shell: bash
-    #   id: coverage-calc
-    #   if: steps.sonarqube-status.outputs.status == 'OK'
-    #   continue-on-error: true
-    #   run: ${{ github.action_path }}/coverage-calc.sh
+    - name: Get Coverage
+      shell: bash
+      id: coverage-calc
+      if: steps.sonarqube-status.outputs.status == 'OK'
+      continue-on-error: true
+      run: ${{ github.action_path }}/coverage-calc.sh
 
-    # - name: Update Quality Gates Sonarqube
-    #   shell: bash
-    #   id: quality-gates-sonarqube
-    #   if: steps.sonarqube-status.outputs.status == 'OK'
-    #   continue-on-error: true
-    #   run: ${{ github.action_path }}/quality-gates-sonarqube.sh
-    #   env:
-    #     SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
-    #     SONAR_TOKEN: ${{ inputs.sonar-api-token }}
-    #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+    - name: Update Quality Gates Sonarqube
+      shell: bash
+      id: quality-gates-sonarqube
+      if: steps.sonarqube-status.outputs.status == 'OK'
+      continue-on-error: true
+      run: ${{ github.action_path }}/quality-gates-sonarqube.sh
+      env:
+        SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
+        SONAR_TOKEN: ${{ inputs.sonar-api-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
