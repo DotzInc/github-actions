@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sleep 5
+sleep 10
 SONAR_STATUS=$(curl -s -u "$SONAR_TOKEN:" \
 "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY")
 
