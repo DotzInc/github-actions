@@ -44,6 +44,9 @@ inputs:
   sonar-token:
     required: true
     type: string
+  sonar-project-key:
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -53,7 +56,7 @@ runs:
       continue-on-error: true
       with:
         args: >
-          -Dsonar.projectKey=${{ github.event.repository.name }}
+          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.sources=${{ inputs.sonar-sources }}
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
           -Dsonar.test.inclusions=${{inputs.sonar-test-inclusions }}
