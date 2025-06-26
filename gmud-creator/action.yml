@@ -1,0 +1,209 @@
+name: "Gmud Creator Action"
+description: "Create a Gmud on GLPI"
+
+inputs:
+  glpi_api_url:
+    description: "The base URL of the GLPI API"
+    required: true
+  glpi_app_token:
+    description: "The application token for GLPI"
+    required: true
+  glpi_user_token:
+    description: "The user token for GLPI"
+    required: true
+  create_gmud:
+    description: "Flag to determine if GMUD should be created"
+    required: true
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate GLPI_API_URL format
+      shell: bash
+      if: ${{ inputs.create_gmud == 'true' }}
+      run: |
+        if [[ ! "$GLPI_API_URL" =~ ^https?:// ]]; then
+          echo "Error: GLPI_API_URL does not start with http:// or https://"
+          exit 1
+        fi
+        echo "GLPI_API_URL format is valid"
+      env:
+        GLPI_API_URL: ${{ inputs.glpi_api_url }}
+
+    - name: Extract PR Data
+      if: ${{ inputs.create_gmud == 'true' }}
+      id: extract-data
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const prBody = context.payload.pull_request.body;
+          const extractSection = (title) => {
+                  const regex = new RegExp(`### ${title}[\\s\\S]*?\\n([\\s\\S]*?)(?=###|$)`);
+                  const match = prBody.match(regex);
+                  return match
+                    ? match[1]
+                        .trim()
+                        .replace(/^- \[.\]|\*|^[\[\]]|[\[\]]$|\[|\]/g, '')
+                        .trim()
+                    : '';
+                };
+
+          function extractResponsible(field) {
+            const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*\\[(@?[\\w\\s.-]+)\\]`, 'i');
+            const match = text.match(regex);
+            return (match || [])[1] || 'Não especificado';
+          };
+
+          const changeType =
+            /-\s\[x\]\s\*\*Imediata\*\*/i.test(prBody) ? 'Imediata' :
+            /-\s\[x\]\s\*\*Não Programada\*\*/i.test(prBody) ? 'Não Programada' :
+            /-\s\[x\]\s\*\*Programada\*\*/i.test(prBody) ? 'Programada' : '';
+
+
+          const service = extractSection('Serviço Afetado');
+          const summary = extractSection('Descrição Resumida');
+          const contxt = extractSection('Contexto');
+          const problem = extractSection('Problema') || 'N/A';
+          const change = extractSection('Mudança Proposta');
+          const impact = extractSection('Descrição de impacto');
+          const task_link = extractSection('Link da Task');
+
+          const dev = extractResponsible('Dev');
+          const tl =  extractResponsible('TL');
+          const team = extractResponsible('Team');
+          const approver = extractSection('Aprovador') || 'Não especificado';
+
+          // Output para os próximos passos
+          core.setOutput('change_type', changeType);
+          core.setOutput('service', service);
+          core.setOutput('summary', summary);
+          core.setOutput('context', contxt);
+          core.setOutput('problem', problem);
+          core.setOutput('change', change);
+          core.setOutput('dev', dev);
+          core.setOutput('tl', tl);
+          core.setOutput('team', team);
+          core.setOutput('approver', approver);
+          core.setOutput('impact', impact);
+          core.setOutput('task_link', task_link);
+          core.setOutput('pr_url', context.payload.pull_request.html_url);
+
+    - name: Create GMUD via API
+      if: ${{ inputs.create_gmud == 'true' }}
+      shell: bash
+      env:
+        GLPI_API_URL: ${{ inputs.glpi_api_url }}
+        GLPI_APP_TOKEN: ${{ inputs.glpi_app_token }}
+        GLPI_USER_TOKEN: ${{ inputs.glpi_user_token }}
+      run: |
+        echo "Initializing GLPI session at \$GLPI_API_URL/initSession"
+        SESSION_RESPONSE=$(curl -s -w "%{http_code}" --max-time 10 -X GET \
+          -H "App-Token: $GLPI_APP_TOKEN" \
+          -H "Authorization: user_token $GLPI_USER_TOKEN" \
+          -H "Content-Type: application/json" \
+          "$GLPI_API_URL/initSession" -o session.json 2> session_error.log || echo "Curl failed with exit code $?")
+
+        SESSION_STATUS=${SESSION_RESPONSE##* }
+        echo "Session HTTP Status: $SESSION_STATUS"
+
+        if [ -s session_error.log ]; then
+          echo "Session init error details:"
+          cat session_error.log
+        fi
+
+        if [ ! -f session.json ]; then
+          echo "Error: session.json not created"
+          exit 1
+        fi
+
+        SESSION_TOKEN=$(jq -r '.session_token' session.json 2>/dev/null)
+        if [ -z "$SESSION_TOKEN" ]; then
+          echo "Error: Failed to extract session_token from session.json"
+          cat session.json
+          exit 1
+        fi
+
+        GMUD_CONTENT=$(cat <<EOF
+        <p><strong>Contexto:</strong></p>
+        <p>${{ steps.extract-data.outputs.context }}</p>
+        <br>
+        <p><strong>Problema</strong>:</p>
+        <p>${{ steps.extract-data.outputs.problem }}</p>
+        <br>
+        <p><strong>Mudança:</strong></p>
+        <p>${{ steps.extract-data.outputs.change }}</p>
+        <br>
+        <p><strong>PR(s):</strong></p>
+        <p>${{ steps.extract-data.outputs.pr_url }}</p>
+        <br><br>
+        <p><strong>Link da task no Azure:</strong></p>
+        <p>${{ steps.extract-data.outputs.task_link }}</p>
+        <br><br>
+        <p><strong>Responsáveis:</strong></p>
+        <p>Dev: ${{ steps.extract-data.outputs.dev }}</p>
+        <p>TL:  ${{ steps.extract-data.outputs.tl }}</p>
+        <p>Team: ${{ steps.extract-data.outputs.team }}</p>
+        <br><br>
+        <p><strong>Aprovador:</strong></p>
+        <p>${{ steps.extract-data.outputs.approver }}</p>
+        EOF
+        )
+
+        GMUD_JSON=$(jq -n --arg name "[${{ steps.extract-data.outputs.service }}] - ${{ steps.extract-data.outputs.summary }}" \
+          --arg content "$GMUD_CONTENT" \
+          --arg dev "${{ steps.extract-data.outputs.dev }}" \
+          --arg tl "${{ steps.extract-data.outputs.tl }}" \
+          --arg impact "${{ steps.extract-data.outputs.impact }}" \
+          '{
+            "input": {
+              "name": $name,
+              "content": $content,
+              "type": "change",
+              "status": "1",
+              "impact": "3",
+              "urgency": "3",
+              "itilcategories_id": "1",
+              "devfield": $dev,
+              "qafield": $tl,
+              "rolloutplancontent": "<p>Merge+do+PR+após+aprovação.</p>",
+              "impactcontent": $impact
+            }
+          }')
+
+        echo "GMUD JSON payload:"
+        echo "$GMUD_JSON" | jq . 2>/dev/null || {
+          echo "Error: Invalid JSON payload"
+          echo "$GMUD_JSON"
+          exit 1
+        }
+
+        RESPONSE=$(curl -s -w "%{http_code}" -X POST \
+          -H "App-Token: $GLPI_APP_TOKEN" \
+          -H "Session-Token: $SESSION_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d "$GMUD_JSON" \
+          "$GLPI_API_URL/Change" -o response.json 2> curl_error.log || echo "Curl failed with exit code $?")
+
+          echo "HTTP Status: $RESPONSE - $GLPI_API_URL"
+
+          if [ -s curl_error.log ]; then
+            echo "Curl error output:"
+            cat curl_error.log
+          fi
+
+          if [ -f response.json ]; then
+            echo "Response content:"
+            cat response.json
+          else
+            echo "Error: response.json was not created"
+            exit 1
+          fi
+
+          if [ -n "$RESPONSE" ] && [ "$RESPONSE" -ge 400 ] 2>/dev/null; then
+            echo "Error: API request failed with status $RESPONSE"
+            exit 1
+          elif [ -z "$RESPONSE" ]; then
+            echo "Error: No HTTP status code returned."
+            exit 1
+          fi
