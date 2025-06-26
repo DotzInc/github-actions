@@ -75,6 +75,7 @@ runs:
       continue-on-error: true
       run: ${{ github.action_path }}/sonarqube-status.sh
       env:
+        SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
         SONAR_TOKEN: ${{ inputs.sonar-api-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
 
@@ -92,5 +93,6 @@ runs:
       continue-on-error: true
       run: ${{ github.action_path }}/quality-gates-sonarqube.sh
       env:
+        SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
         SONAR_TOKEN: ${{ inputs.sonar-api-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}

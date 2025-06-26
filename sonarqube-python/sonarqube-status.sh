@@ -2,12 +2,12 @@
 
 sleep 10
 SONAR_STATUS=$(curl -s -u "$SONAR_TOKEN:" \
-"$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=${{ github.event.repository.name }}")
+"$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY")
 
 STATUS=$(echo "$SONAR_STATUS" | jq -r '.projectStatus.status')
 
 echo "status=$STATUS" >> $GITHUB_OUTPUT
-echo "sonarqube ${{ github.event.repository.name }} status: $STATUS"
+echo "sonarqube $SONAR_PROJECT_KEY status: $STATUS"
 if [ "$STATUS" = "ERROR" ]; then
     echo "Quality Gate falhou!"
     exit 1

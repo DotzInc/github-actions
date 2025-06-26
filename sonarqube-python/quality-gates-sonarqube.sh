@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PROJECT_RESPONSE=$(curl -s -u "$SONAR_TOKEN:" \
-"$SONAR_HOST_URL/api/qualitygates/get_by_project?project=${{ github.event.repository.name }}")
+"$SONAR_HOST_URL/api/qualitygates/get_by_project?project=$SONAR_PROJECT_KEY")
 
 QUALITY_GATE_NAME=$(echo "$PROJECT_RESPONSE" | jq -r '.qualityGate.name')
 QUALITY_GATE_NAME=$(echo "$QUALITY_GATE_NAME" | jq -sRr @uri)
