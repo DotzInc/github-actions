@@ -77,6 +77,7 @@ runs:
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
+      shell: bash
       if: github.base_ref == 'develop' && inputs.sonar-enable == true
       continue-on-error: true
       run: ${{ github.action_path }}/sonarqube-status.sh
@@ -85,12 +86,14 @@ runs:
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
 
     - name: Get Coverage
+      shell: bash
       id: coverage-calc
       if: steps.sonarqube-status.outputs.status == 'OK'
       continue-on-error: true
       run: ${{ github.action_path }}/coverage-calc.sh
 
     - name: Update Quality Gates Sonarqube
+      shell: bash
       id: quality-gates-sonarqube
       if: steps.sonarqube-status.outputs.status == 'OK'
       continue-on-error: true
