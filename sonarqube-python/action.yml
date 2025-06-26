@@ -35,11 +35,14 @@ inputs:
     required: false
     type: string
     default: "3.11"
-  sonar-token:
-    type: string
   sonar-host-url:
+    required: true
     type: string
   sonar-api-token:
+    required: true
+    type: string
+  sonar-token:
+    required: true
     type: string
 
 runs:
