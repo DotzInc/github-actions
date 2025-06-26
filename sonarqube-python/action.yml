@@ -31,13 +31,10 @@ inputs:
     type: string
     default: "**/__pycache__/**,**/*.pyc,**/migrations/**,
     **/fixtures/**,**/.venv/**,**/.git/**,**/.vscode/**,**/*.html,**/htmlcov/**,coverage.xml"
-  sonar-lang:
-    required: false
-    type: string
-    default: "python"
   sonar-lang-version:
     required: false
     type: string
+    default: "3.11"
   sonar-token:
     type: string
   sonar-host-url:
@@ -48,16 +45,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Push to RubyGems
-      shell: bash
-      run: ${{ github.action_path }}/action.sh
-      env:
-        RUBYGEMS_API_KEY: ${{ inputs.rubygems_api_key }}
     - name: SonarQube Scan
-      if: |
-        github.base_ref == 'develop' &&
-        inputs.sonar-enable == true &&
-        inputs.sonar-lang == 'python'
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       continue-on-error: true
       with:
@@ -78,7 +66,6 @@ runs:
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
       shell: bash
-      if: github.base_ref == 'develop' && inputs.sonar-enable == true
       continue-on-error: true
       run: ${{ github.action_path }}/sonarqube-status.sh
       env:
