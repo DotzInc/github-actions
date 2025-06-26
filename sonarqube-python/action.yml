@@ -73,7 +73,7 @@ runs:
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
-        SONAR_HOST_URL: ${{ secrets.sonar-host-url }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
@@ -82,7 +82,7 @@ runs:
       run: ${{ github.action_path }}/sonarqube-status.sh
       env:
         SONAR_TOKEN: ${{ inputs.sonar-api-token }}
-        SONAR_HOST_URL: ${{ secrets.sonar-host-url }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
 
     - name: Get Coverage
       id: coverage-calc
@@ -97,4 +97,4 @@ runs:
       run: ${{ github.action_path }}/quality-gates-sonarqube.sh
       env:
         SONAR_TOKEN: ${{ inputs.sonar-api-token }}
-        SONAR_HOST_URL: ${{ secrets.sonar-host-url }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
