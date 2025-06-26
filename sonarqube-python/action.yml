@@ -95,3 +95,4 @@ runs:
         SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
         SONAR_TOKEN: ${{ inputs.sonar-api-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+        LEGACY_COV_NUM: ${{ steps.coverage-calc.outputs.coverage }}

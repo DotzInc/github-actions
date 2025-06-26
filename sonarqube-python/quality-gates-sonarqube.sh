@@ -13,7 +13,6 @@ GATE_RESPONSE=$(curl -s -u "$SONAR_TOKEN:" \
 
 NEW_COV_CONDITION_ID=$(echo "$GATE_RESPONSE" | jq -r '.conditions[] | select(.metric=="coverage") | .id')
 CURRENT_NEW_COV=$(echo "$GATE_RESPONSE" | jq -r '.conditions[] | select(.metric=="coverage") | .error')
-LEGACY_COV_NUM=${{ steps.coverage-calc.outputs.coverage }}
 
 if [ -n "$NEW_COV_CONDITION_ID" ]; then
     CURRENT_NEW_COV_NUM=$(echo "$CURRENT_NEW_COV" | sed 's/[^0-9.]*//g')
