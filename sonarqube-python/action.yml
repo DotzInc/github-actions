@@ -49,7 +49,7 @@ inputs:
   sonar-timeout:
     required: false
     type: string
-    default: "300"
+    default: "60"
 
 runs:
   using: composite
