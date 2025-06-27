@@ -46,6 +46,10 @@ inputs:
   sonar-project-key:
     required: true
     type: string
+  sonar-timeout:
+    required: false
+    type: string
+    default: "60"
 
 runs:
   using: composite
@@ -64,6 +68,10 @@ runs:
           -Dsonar.python.coverage.reportPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
+          -Dsonar.ws.timeout=${{ inputs.sonar-timeout }}
+          -Dsonar.scanner.connectTimeout=30000
+          -Dsonar.scanner.readTimeout=30000
+          -Dsonar.scanner.skipSystemTruststore=true
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
