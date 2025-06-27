@@ -68,9 +68,9 @@ runs:
           -Dsonar.python.coverage.reportPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
-          -Dsonar.ws.timeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.connectTimeout=30000
-          -Dsonar.scanner.readTimeout=30000
+          -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
+          -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
+          -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.skipSystemTruststore=true
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
