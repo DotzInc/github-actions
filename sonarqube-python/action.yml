@@ -69,6 +69,8 @@ runs:
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
           -Dsonar.ws.timeout=${{ inputs.sonar-timeout }}
+          -Dsonar.scanner.connectTimeout=30000
+          -Dsonar.scanner.readTimeout=30000
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
