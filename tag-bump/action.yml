@@ -1,5 +1,5 @@
-name: Create a Tag
-description: Create Tag for Release
+name: Create Tag
+description: Create Tag to be reused by rollback feature
 
 runs:
   using: 'docker'
