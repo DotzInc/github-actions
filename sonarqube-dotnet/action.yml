@@ -60,6 +60,7 @@ runs:
           -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
+          -Dsonar.cs.analyzeGeneratedCode=true
 
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
