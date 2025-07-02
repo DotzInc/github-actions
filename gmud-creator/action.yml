@@ -45,7 +45,7 @@ runs:
 
           function extractResponsible(field) {
             const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*\\[(@?[\\w\\s.-]+)\\]`, 'i');
-            const match = text.match(regex);
+            const match = field.match(regex);
             return (match || [])[1] || 'Não especificado';
           };
 
