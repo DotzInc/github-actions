@@ -13,7 +13,6 @@ inputs:
   sonar-sources-tests:
     required: false
     type: string
-    default: "tests"
   sonar-report-paths:
     required: false
     type: string
@@ -61,7 +60,7 @@ runs:
           -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.skipSystemTruststore=true
+
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
