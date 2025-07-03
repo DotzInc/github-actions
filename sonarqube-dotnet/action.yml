@@ -50,6 +50,7 @@ runs:
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       with:
         args: >
+          -Dsonar.inclusions="**/*.cs"
           -Dsonar.sources="${{ inputs.sonar-sources }}"
           -Dsonar.projectKey="${{ inputs.sonar-project-key }}"
           -Dsonar.projectName="${{ inputs.sonar-project-key }}"
