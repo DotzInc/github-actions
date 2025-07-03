@@ -58,7 +58,7 @@ runs:
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.sources=${{ inputs.sonar-sources }}
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
-          -Dsonar.cs.vstest.reportsPaths=${{ inputs.sonar-sources-tests }}
+          -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
@@ -66,7 +66,7 @@ runs:
           -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.dotnet.excludeTestProjects=true
-          -Dsonar.coverage.exclusions=**Test*.cs
+          -Dsonar.coverage.exclusions=**/*Test*.cs
           -Dsonar.cs.analyzeGeneratedCode=true
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
