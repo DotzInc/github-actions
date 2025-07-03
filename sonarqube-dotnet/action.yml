@@ -53,27 +53,16 @@ runs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        
+
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       continue-on-error: true
       with:
         args: >
-          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.sources=CoreAccounts.Application
-          -Dsonar.tests=${{ inputs.sonar-sources-tests }}
-          -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
-          -Dsonar.cs.analyzeGeneratedCode=true
-          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
-          -Dsonar.verbose=${{ inputs.sonar-verbose }}
-          -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
-          -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.dotnet.excludeTestProjects=true
-          -Dsonar.coverage.exclusions=**/*Test*.cs
-          -Dsonar.scanner.forceReload=true
-          -Dsonar.scm.provider=git
+          -Dsonar.projectKey=core-accounts
+          -Dsonar.projectName=CoreAccounts
+          -Dsonar.cs.opencover.reportsPaths=coverage.xml
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
