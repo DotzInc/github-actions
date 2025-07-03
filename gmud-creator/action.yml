@@ -44,8 +44,8 @@ runs:
                 };
 
           function extractResponsible(field) {
-            const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*\\[(@?[\\w\\s.-]+)\\]`, 'i');
-            const match = field.match(regex);
+            const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*\\[(.*?)\\]`, 'i');
+            const match = pbody.match(regex);
             return (match || [])[1] || 'Não especificado';
           };
 
