@@ -72,6 +72,7 @@ runs:
           -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.skipSystemTruststore=true
+          -Dsonar.scanner.forceReload=true
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}

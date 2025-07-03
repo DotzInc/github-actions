@@ -69,6 +69,7 @@ runs:
           -Dsonar.dotnet.excludeTestProjects=true
           -Dsonar.coverage.exclusions=**/*Test*.cs
           -Dsonar.cs.analyzeGeneratedCode=true
+          -Dsonar.scanner.forceReload=true
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
