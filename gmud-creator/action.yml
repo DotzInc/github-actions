@@ -11,10 +11,10 @@ inputs:
   glpi_user_token:
     description: "The user token for GLPI"
     required: true
-  slack-bot-user-oauth-access-token:
+  slack_bot_user_oauth_access_token:
     description: "Slack Bot User OAuth Access Token for sending notifications"
     required: true
-  slack-channel:
+  slack_channel:
     description: "Slack channel to send notifications"
     required: true
 
@@ -225,7 +225,7 @@ runs:
     - name: Send GMUD payload notification
       uses: archive/github-actions-slack@v2.9.0
       with:
-        slack-bot-user-oauth-access-token: ${{ inputs.slack-bot-user-oauth-access-token }}
+        slack-bot-user-oauth-access-token: ${{ inputs.slack_bot_user_oauth_access_token }}
         slack-channel: 'C093VDRV5CP'
         slack-blocks: |
           [
