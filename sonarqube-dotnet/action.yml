@@ -59,7 +59,7 @@ runs:
       continue-on-error: true
       with:
         args: >
-          -Dsonar.sources=CoreAccounts.Application
+          -Dsonar.sources=.
           -Dsonar.projectKey=core-accounts
           -Dsonar.projectName=CoreAccounts
           -Dsonar.cs.opencover.reportsPaths=coverage.xml
