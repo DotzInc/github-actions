@@ -55,6 +55,8 @@ runs:
           -Dsonar.projectName="${{ inputs.sonar-project-key }}"
           -Dsonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}"
           -Dsonar.exclusions="${{ inputs.sonar-exclusions }}"
+          -Dsonar.scanner.skipSystemTruststore=true
+          -Dsonar.scanner.forceReload=true
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
