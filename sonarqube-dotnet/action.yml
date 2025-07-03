@@ -53,7 +53,9 @@ runs:
     - name: Setup .NET
       shell: bash
       run: |
-        dotnet tool install --global dotnet-reportgenerator-globaltool
+        if ! dotnet tool list -g | grep reportgenerator; then
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+        fi
         echo "${{ inputs.sonar-dotnet-version }}" > .dotnet-version
       env:
         DOTNET_ROOT: ${{ env.HOME }}/.dotnet
