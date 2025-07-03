@@ -13,11 +13,11 @@ inputs:
   sonar-sources-tests:
     required: false
     type: string
-    default: "."
+    default: "**/coverage.opencover.xml,**/TestResults/*.trx"
   sonar-report-paths:
     required: false
     type: string
-    default: "**/coverage.opencover.xml,**/TestResults/*.trx"
+    default: "."
   sonar-source-encoding:
     required: false
     type: string
@@ -53,12 +53,10 @@ runs:
     - name: Setup .NET
       shell: bash
       run: |
-        if ! dotnet tool list -g | grep reportgenerator; then
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-        fi
-        echo "${{ inputs.sonar-dotnet-version }}" > .dotnet-version
+        dotnet tool install --global dotnet-sonarscanner
       env:
         DOTNET_ROOT: ${{ env.HOME }}/.dotnet
+
 
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
@@ -68,9 +66,9 @@ runs:
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.sources=${{ inputs.sonar-sources }}
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
-          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
-          -Dsonar.cs.vstest.reportsPaths=${{ inputs.sonar-report-paths }}
+          -Dsonar.cs.vstest.reportsPaths=${{ inputs.sonar-sources-tests }}
+          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
           -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}

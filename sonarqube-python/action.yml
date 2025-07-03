@@ -62,7 +62,7 @@ runs:
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.sources=${{ inputs.sonar-sources }}
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
-          -Dsonar.test.inclusions=${{inputs.sonar-test-inclusions }}
+          -Dsonar.test.inclusions=${{ inputs.sonar-test-inclusions }}
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.python.version=${{ inputs.sonar-lang-version }}
           -Dsonar.python.coverage.reportPaths=${{ inputs.sonar-report-paths }}
