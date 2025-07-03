@@ -55,6 +55,7 @@ runs:
       continue-on-error: true
       with:
         args: >
+          -Dsonar.language=cs
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.sources=${{ inputs.sonar-sources }}
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
