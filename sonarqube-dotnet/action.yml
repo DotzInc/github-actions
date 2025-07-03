@@ -13,7 +13,7 @@ inputs:
   sonar-sources-tests:
     required: false
     type: string
-    default: "**/coverage.opencover.xml,**/TestResults/*.trx"
+    default: "**/coverage.opencover.xml,.**/*.trx"
   sonar-report-paths:
     required: false
     type: string
