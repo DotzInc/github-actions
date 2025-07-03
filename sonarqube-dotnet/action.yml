@@ -13,10 +13,11 @@ inputs:
   sonar-sources-tests:
     required: false
     type: string
+    default: "."
   sonar-report-paths:
     required: false
     type: string
-    default: "coverage.xml"
+    default: "**/coverage.opencover.xml,**/TestResults/*.trx"
   sonar-source-encoding:
     required: false
     type: string
@@ -24,7 +25,7 @@ inputs:
   sonar-exclusions:
     required: false
     type: string
-    default: "**/bin/**,**/obj/**"
+    default: "**/bin/**,**/obj/**,**/Migrations/**"
   sonar-host-url:
     required: true
     type: string
@@ -40,11 +41,23 @@ inputs:
   sonar-timeout:
     required: false
     type: string
-    default: "60"
+    default: "300"
+  sonar-dotnet-version:
+    required: false
+    type: string
+    default: "8.0.x"
 
 runs:
   using: composite
   steps:
+    - name: Setup .NET
+      shell: bash
+      run: |
+        dotnet tool install --global dotnet-reportgenerator-globaltool
+        echo "${{ inputs.sonar-dotnet-version }}" > .dotnet-version
+      env:
+        DOTNET_ROOT: ${{ env.HOME }}/.dotnet
+
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       continue-on-error: true
@@ -55,13 +68,15 @@ runs:
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
+          -Dsonar.cs.vstest.reportsPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
           -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
+          -Dsonar.dotnet.excludeTestProjects=true
+          -Dsonar.coverage.exclusions=**Test*.cs
           -Dsonar.cs.analyzeGeneratedCode=true
-
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
