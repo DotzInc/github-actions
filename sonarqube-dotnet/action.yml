@@ -1,5 +1,5 @@
-name: 'Sonarqube Python Scanner'
-description: 'Quality Gate Sonarqube for Python projects'
+name: 'Sonarqube .NET Scanner'
+description: 'Quality Gate Sonarqube for .NET projects'
 
 inputs:
   sonar-verbose:
@@ -9,15 +9,7 @@ inputs:
   sonar-sources:
     required: false
     type: string
-    default: "src"
-  sonar-sources-tests:
-    required: false
-    type: string
-    default: "tests"
-  sonar-test-inclusions:
-    required: false
-    type: string
-    default: "**/test_*.py,**/*_test.py,**/__pycache__/**,**/__init__.py"
+    default: "."
   sonar-report-paths:
     required: false
     type: string
@@ -29,11 +21,7 @@ inputs:
   sonar-exclusions:
     required: false
     type: string
-    default: "**/__pycache__/**,**/*.pyc,**/migrations/**,**/fixtures/**,**/.venv/**,**/.git/**,**/.vscode/**,**/*.html,**/htmlcov/**,coverage.xml"
-  sonar-lang-version:
-    required: false
-    type: string
-    default: "3.11"
+    default: "**/bin/**,**/obj/**,**/TestResults/**,**/Tests/**,**/*.py"
   sonar-host-url:
     required: true
     type: string
@@ -49,28 +37,24 @@ inputs:
   sonar-timeout:
     required: false
     type: string
-    default: "60"
+    default: "300"
+  sonar-dotnet-version:
+    required: false
+    type: string
+    default: "8.0.x"
 
 runs:
   using: composite
   steps:
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
-      continue-on-error: true
       with:
         args: >
-          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
-          -Dsonar.sources=${{ inputs.sonar-sources }}
-          -Dsonar.tests=${{ inputs.sonar-sources-tests }}
-          -Dsonar.test.inclusions=${{ inputs.sonar-test-inclusions }}
-          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
-          -Dsonar.python.version=${{ inputs.sonar-lang-version }}
-          -Dsonar.python.coverage.reportPaths=${{ inputs.sonar-report-paths }}
-          -Dsonar.verbose=${{ inputs.sonar-verbose }}
-          -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
-          -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
+          -Dsonar.sources="${{ inputs.sonar-sources }}"
+          -Dsonar.projectKey="${{ inputs.sonar-project-key }}"
+          -Dsonar.projectName="${{ inputs.sonar-project-key }}"
+          -Dsonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}"
+          -Dsonar.exclusions="${{ inputs.sonar-exclusions }}"
           -Dsonar.scanner.skipSystemTruststore=true
           -Dsonar.scanner.forceReload=true
       env:
