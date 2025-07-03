@@ -50,14 +50,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup .NET
-      shell: bash
-      run: |
-        dotnet tool install --global dotnet-sonarscanner
-      env:
-        DOTNET_ROOT: ${{ env.HOME }}/.dotnet
-
-
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       continue-on-error: true
