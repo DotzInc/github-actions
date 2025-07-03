@@ -17,7 +17,7 @@ inputs:
   sonar-report-paths:
     required: false
     type: string
-    default: "."
+    default: "coverage.xml"
   sonar-source-encoding:
     required: false
     type: string
@@ -58,7 +58,6 @@ runs:
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.sources=${{ inputs.sonar-sources }}
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
-          -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.cs.vstest.reportsPaths=${{ inputs.sonar-sources-tests }}
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
