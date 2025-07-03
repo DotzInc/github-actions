@@ -50,9 +50,9 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+    - name: ls la
+      run: |
+        ls -laR 
 
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
