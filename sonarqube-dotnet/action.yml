@@ -25,7 +25,7 @@ inputs:
   sonar-exclusions:
     required: false
     type: string
-    default: "**/bin/**,**/obj/**,**/Migrations/**,**/*.py"
+    default: "**/bin/**,**/obj/**,**/TestResults/**,**/Tests/**,**/*.py"
   sonar-host-url:
     required: true
     type: string
@@ -54,11 +54,11 @@ runs:
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       with:
         args: >
-          -Dsonar.sources=CoreAccounts.API.Consumer,CoreAccounts.API.Private,CoreAccounts.Application,CoreAccounts.Tests,CoreAccounts.Worker.ExpiresSessions
+          -Dsonar.sources=.
           -Dsonar.projectKey=core-accounts
           -Dsonar.projectName=CoreAccounts
-          -Dsonar.cs.opencover.reportsPaths=coverage.xml
-          -Dsonar.exclusions="**/bin/**,**/obj/**,**/TestResults/**,**/Tests/**"
+          -Dsonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}"
+          -Dsonar.exclusions="${{ inputs.sonar-exclusions }}"
 
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
