@@ -56,7 +56,7 @@ runs:
       with:
         args: >
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
-          -Dsonar.sources=${{ inputs.sonar-sources }}
+          -Dsonar.sources=CoreAccounts.Application
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
           -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.cs.analyzeGeneratedCode=true
