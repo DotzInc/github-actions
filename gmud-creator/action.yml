@@ -54,8 +54,8 @@ runs:
             /-\s\[x\]\s\*\*Não Programada\*\*/i.test(prBody) ? 'Não Programada' :
             /-\s\[x\]\s\*\*Programada\*\*/i.test(prBody) ? 'Programada' : '';
 
+          const tested = /-\s\[x\]\s\*\*Confirmo\*\*/i.test(prBody) ? 'Sim' : 'Não';
 
-          const service = extractSection('Serviço Afetado');
           const summary = extractSection('Descrição Resumida');
           const contxt = extractSection('Contexto');
           const problem = extractSection('Problema') || 'N/A';
@@ -70,7 +70,6 @@ runs:
 
           // Output para os próximos passos
           core.setOutput('change_type', changeType);
-          core.setOutput('service', service);
           core.setOutput('summary', summary);
           core.setOutput('context', contxt);
           core.setOutput('problem', problem);
@@ -82,6 +81,7 @@ runs:
           core.setOutput('impact', impact);
           core.setOutput('task_link', task_link);
           core.setOutput('pr_url', context.payload.pull_request.html_url);
+          core.setOutput('tested', tested);
 
     - name: Create GMUD via API
       shell: bash
@@ -118,6 +118,8 @@ runs:
         fi
 
         GMUD_CONTENT=$(cat <<EOF
+        <p><strong>Confirmo que foi testado em ambiente de homologação:</strong></p>
+        <p>${{ steps.extract-data.outputs.tested }}</p>
         <p><strong>Contexto:</strong></p>
         <p>${{ steps.extract-data.outputs.context }}</p>
         <br>
@@ -143,7 +145,7 @@ runs:
         EOF
         )
 
-        GMUD_JSON=$(jq -n --arg name "[${{ steps.extract-data.outputs.service }}] - ${{ steps.extract-data.outputs.summary }}" \
+        GMUD_JSON=$(jq -n --arg name "[${{ github.repository }}] - ${{ steps.extract-data.outputs.summary }}" \
           --arg content "$GMUD_CONTENT" \
           --arg dev "${{ steps.extract-data.outputs.dev }}" \
           --arg tl "${{ steps.extract-data.outputs.tl }}" \
@@ -200,3 +202,81 @@ runs:
             echo "Error: No HTTP status code returned."
             exit 1
           fi
+
+    - name: Extract GLPI GMUD ID
+      id: glpi-id
+      shell: bash
+      run: |
+        if [ -f response.json ]; then
+          GMUD_ID=$(jq -r '.id' response.json)
+          echo "GMUD_ID=$GMUD_ID" >> $GITHUB_OUTPUT
+          echo "GLPI GMUD ID: $GMUD_ID"
+        else
+          echo "Error: response.json not found"
+          exit 1
+        fi
+
+    - name: Send GMUD payload notification
+      if: ${{ github.ref_name == 'main' }}
+      uses: archive/github-actions-slack@v2.9.0
+      with:
+        slack-bot-user-oauth-access-token: ${{ secrets.SLACK_NOBOT_TOKEN }}
+        slack-channel: 'C093VDRV5CP'
+        slack-blocks: |
+          [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text",
+                "text": "📢 Nova GMUD Criada 📢",
+                "emoji": true
+              }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Repositório:*\n${{ github.repository }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Tipo de Mudança:*\n${{ steps.extract-data.outputs.change_type }}"
+                }
+              ]
+            },
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "*Descrição:*\n${{ steps.extract-data.outputs.summary }}"
+              }
+            },
+            {
+              "type": "divider"
+            },
+            {
+              "type": "actions",
+              "elements": [
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Abrir no GLPI",
+                    "emoji": true
+                  },
+                  "url": "https://suporte.dotz.com.br/front/change.form.php?id=${{ steps.glpi-id.outputs.GMUD_ID }}",
+                  "style": "primary"
+                },
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Ver PR no GitHub",
+                    "emoji": true
+                  },
+                  "url": "${{ steps.extract-data.outputs.pr_url }}"
+                }
+              ]
+            }
+          ]
