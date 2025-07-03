@@ -60,6 +60,7 @@ runs:
           -Dsonar.sources=${{ inputs.sonar-sources }}
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
           -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
+          -Dsonar.cs.analyzeGeneratedCode=true
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
@@ -68,7 +69,6 @@ runs:
           -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.dotnet.excludeTestProjects=true
           -Dsonar.coverage.exclusions=**/*Test*.cs
-          -Dsonar.cs.analyzeGeneratedCode=true
           -Dsonar.scanner.forceReload=true
           -Dsonar.scm.provider=git
       env:
