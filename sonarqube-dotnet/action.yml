@@ -50,14 +50,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: ls la
-      shell: bash
-      run: |
-        ls -la 
-
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       with:
