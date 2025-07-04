@@ -21,7 +21,7 @@ inputs:
   sonar-exclusions:
     required: false
     type: string
-    default: "**/bin/**,**/obj/**,**/TestResults/**,**/Tests/**,**/*.py"
+    default: "**/bin/**,**/obj/**,**/TestResults/**,**/*.py"
   sonar-host-url:
     required: true
     type: string
