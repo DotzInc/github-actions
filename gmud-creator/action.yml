@@ -51,7 +51,7 @@ runs:
 
           function extractResponsible(field) {
             const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*\\[(.*?)\\]`, 'i');
-            const match = pbody.match(regex);
+            const match = prBody.match(regex);
             return (match || [])[1] || 'Não especificado';
           };
 
