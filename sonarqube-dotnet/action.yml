@@ -63,7 +63,7 @@ runs:
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.scanner.skipSystemTruststore=true
           -Dsonar.scanner.forceReload=true
-          -Dsonar.cs.analyzer.projectOutPaths=bin/Debug/net6.0
+          -Dsonar.cs.analyzer.projectOutPaths=bin/Debug/net8.0
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
