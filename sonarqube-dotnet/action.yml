@@ -59,7 +59,7 @@ runs:
           sonar.projectBaseDir=${{ inputs.sonar-sources }}
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.projectName=${{ inputs.sonar-project-name }}
-          -Dsonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}
+          -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.scanner.skipSystemTruststore=true
           -Dsonar.scanner.forceReload=true
