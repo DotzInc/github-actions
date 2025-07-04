@@ -226,7 +226,7 @@ runs:
       uses: archive/github-actions-slack@v2.9.0
       with:
         slack-bot-user-oauth-access-token: ${{ inputs.slack_bot_user_oauth_access_token }}
-        slack-channel: 'C093VDRV5CP'
+        slack-channel: C093VDRV5CP
         slack-blocks: |
           [
             {
