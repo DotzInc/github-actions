@@ -79,8 +79,8 @@ runs:
           /n:"${{ inputs.sonar-project-name }}" \
           /d:sonar.host.url="${{ inputs.sonar-host-url }}" \
           /d:sonar.login="${{ inputs.sonar-token }}" \
-          /d:sonar.cs.opencover.reportsPaths="coverage.xml" \
-          /d:sonar.verbose=true
+          /d:sonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}" \
+          /d:sonar.verbose="${{ inputs.sonar-verbose }}"
     
     - name: Build
       shell: bash
