@@ -83,7 +83,7 @@ runs:
     - name: End SonarQube Analysis
       run: |
         dotnet sonarscanner end \
-          /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          /d:sonar.login="${{ inputs.sonar-token }}""
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
