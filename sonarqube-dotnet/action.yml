@@ -69,12 +69,14 @@ runs:
     #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
     - name: Install SonarScanner
       shell: bash
-      run: dotnet tool install --global dotnet-sonarscanner
+      run: |
+        dotnet tool install --global dotnet-sonarscanner
+        echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
     - name: Start SonarQube Analysis
       shell: bash
       run: |
-        dotnet sonarscanner begin \
+        dotnet-sonarscanner begin \
           /k:"${{ inputs.sonar-project-key }}" \
           /n:"${{ inputs.sonar-project-name }}" \
           /d:sonar.host.url="${{ inputs.sonar-host-url }}" \
@@ -89,7 +91,7 @@ runs:
     - name: End SonarQube Analysis
       shell: bash
       run: |
-        dotnet sonarscanner end \
+        dotnet-sonarscanner end \
           /d:sonar.login="${{ inputs.sonar-token }}"
 
     - name: Check SonarQube Quality Gate Status
