@@ -68,6 +68,7 @@ runs:
     #     SONAR_TOKEN: ${{ inputs.sonar-token }}
     #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
     - name: Start SonarQube Analysis
+      shell: bash
       run: |
         dotnet sonarscanner begin \
           /k:"${{ inputs.sonar-project-key }}" \
@@ -78,9 +79,11 @@ runs:
           /d:sonar.verbose=true
     
     - name: Build
+      shell: bash
       run: dotnet build ${{ inputs.sonar-project-name }}.sln --no-restore
     
     - name: End SonarQube Analysis
+      shell: bash
       run: |
         dotnet sonarscanner end \
           /d:sonar.login="${{ inputs.sonar-token }}""
