@@ -50,23 +50,6 @@ inputs:
 runs:
   using: composite
   steps:
-    # - name: SonarQube Scan
-    #   uses: sonarsource/sonarqube-scan-action@v5.2.0
-    #   with:
-    #     args: >
-    #       -Dsonar.inclusions=**/*.cs
-    #       -Dsonar.sources=${{ inputs.sonar-sources }}
-    #       -Dsonar.projectBaseDir=${{ inputs.sonar-sources }}
-    #       -Dsonar.projectKey=${{ inputs.sonar-project-key }}
-    #       -Dsonar.projectName=${{ inputs.sonar-project-name }}
-    #       -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
-    #       -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
-    #       -Dsonar.scanner.skipSystemTruststore=true
-    #       -Dsonar.scanner.forceReload=true
-    #       -Dsonar.cs.analyzer.projectOutPaths=bin/Debug/net8.0
-    #   env:
-    #     SONAR_TOKEN: ${{ inputs.sonar-token }}
-    #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
     - name: Setup SonarScanner
       shell: bash
       run: |
