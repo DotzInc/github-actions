@@ -70,8 +70,8 @@ runs:
     - name: Start SonarQube Analysis
       run: |
         dotnet sonarscanner begin \
-          /k:"${{ secrets.SONAR_PROJECT_KEY }}" \
-          /n:"${{ secrets.SONAR_PROJECT_NAME }}" \
+          /k:"${{ inputs.sonar-project-key }}" \
+          /n:"${{ inputs.sonar-project-name }}" \
           /d:sonar.host.url="${{ inputs.sonar-host-url }}" \
           /d:sonar.login="${{ inputs.sonar-token }}" \
           /d:sonar.cs.opencover.reportsPaths="coverage.xml" \
