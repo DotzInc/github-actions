@@ -67,11 +67,18 @@ runs:
     #   env:
     #     SONAR_TOKEN: ${{ inputs.sonar-token }}
     #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
-    - name: Install SonarScanner
+    - name: Install or Update SonarScanner
       shell: bash
       run: |
-        dotnet tool install --global dotnet-sonarscanner
+        # This will install or update if needed
+        dotnet tool update --global dotnet-sonarscanner || dotnet tool install --global dotnet-sonarscanner
         echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+        
+    - name: Verify SonarScanner
+      shell: bash
+      run: |
+        which dotnet-sonarscanner
+        dotnet-sonarscanner /version
 
     - name: Start SonarQube Analysis
       shell: bash
