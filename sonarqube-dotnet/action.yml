@@ -50,23 +50,40 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@v5.2.0
-      with:
-        args: >
-          -Dsonar.inclusions=**/*.cs
-          -Dsonar.sources=${{ inputs.sonar-sources }}
-          -Dsonar.projectBaseDir=${{ inputs.sonar-sources }}
-          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
-          -Dsonar.projectName=${{ inputs.sonar-project-name }}
-          -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
-          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
-          -Dsonar.scanner.skipSystemTruststore=true
-          -Dsonar.scanner.forceReload=true
-          -Dsonar.cs.analyzer.projectOutPaths=bin/Debug/net8.0
-      env:
-        SONAR_TOKEN: ${{ inputs.sonar-token }}
-        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+    # - name: SonarQube Scan
+    #   uses: sonarsource/sonarqube-scan-action@v5.2.0
+    #   with:
+    #     args: >
+    #       -Dsonar.inclusions=**/*.cs
+    #       -Dsonar.sources=${{ inputs.sonar-sources }}
+    #       -Dsonar.projectBaseDir=${{ inputs.sonar-sources }}
+    #       -Dsonar.projectKey=${{ inputs.sonar-project-key }}
+    #       -Dsonar.projectName=${{ inputs.sonar-project-name }}
+    #       -Dsonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}
+    #       -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
+    #       -Dsonar.scanner.skipSystemTruststore=true
+    #       -Dsonar.scanner.forceReload=true
+    #       -Dsonar.cs.analyzer.projectOutPaths=bin/Debug/net8.0
+    #   env:
+    #     SONAR_TOKEN: ${{ inputs.sonar-token }}
+    #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+    - name: Start SonarQube Analysis
+      run: |
+        dotnet sonarscanner begin \
+          /k:"${{ secrets.SONAR_PROJECT_KEY }}" \
+          /n:"${{ secrets.SONAR_PROJECT_NAME }}" \
+          /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.cs.opencover.reportsPaths="coverage.xml" \
+          /d:sonar.verbose=true
+    
+    - name: Build
+      run: dotnet build ${{ inputs.sonar-project-name }}.sln --no-restore
+    
+    - name: End SonarQube Analysis
+      run: |
+        dotnet sonarscanner end \
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
