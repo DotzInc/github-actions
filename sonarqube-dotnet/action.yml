@@ -55,34 +55,34 @@ runs:
       run: |
         # Install or update without failing if already installed
         { dotnet tool update --global dotnet-sonarscanner || \
-          { [ $? -eq 0 ] || dotnet tool install --global dotnet-sonarscanner; }; } && \
-          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-        
+        { [ $? -eq 0 ] || dotnet tool install --global dotnet-sonarscanner; }; } && \
+        echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
     - name: Verify SonarScanner
       shell: bash
       run: |
         echo "SonarScanner path: $(which dotnet-sonarscanner)"
         echo "Version: $(dotnet-sonarscanner --version)"
-        
+
     - name: Start SonarQube Analysis
       shell: bash
       run: |
         dotnet-sonarscanner begin \
-          /k:"${{ inputs.sonar-project-key }}" \
-          /n:"${{ inputs.sonar-project-name }}" \
-          /d:sonar.host.url="${{ inputs.sonar-host-url }}" \
-          /d:sonar.login="${{ inputs.sonar-token }}" \
-          /d:sonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}" \
-          /d:sonar.verbose="${{ inputs.sonar-verbose }}"
-    
+        /k:"${{ inputs.sonar-project-key }}" \
+        /n:"${{ inputs.sonar-project-name }}" \
+        /d:sonar.host.url="${{ inputs.sonar-host-url }}" \
+        /d:sonar.login="${{ inputs.sonar-token }}" \
+        /d:sonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}" \
+        /d:sonar.verbose="${{ inputs.sonar-verbose }}"
+
     - name: Restore NuGet packages
       shell: bash
       run: dotnet restore ${{ inputs.sonar-project-name }}.sln
-    
+
     - name: Build Solution
       shell: bash
       run: dotnet build ${{ inputs.sonar-project-name }}.sln --no-restore
-    
+
     - name: End SonarQube Analysis
       shell: bash
       run: |
