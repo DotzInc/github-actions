@@ -67,19 +67,20 @@ runs:
     #   env:
     #     SONAR_TOKEN: ${{ inputs.sonar-token }}
     #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
-    - name: Install or Update SonarScanner
+    - name: Setup SonarScanner
       shell: bash
       run: |
-        # This will install or update if needed
-        dotnet tool update --global dotnet-sonarscanner || dotnet tool install --global dotnet-sonarscanner
-        echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+        # Install or update without failing if already installed
+        { dotnet tool update --global dotnet-sonarscanner || \
+          { [ $? -eq 0 ] || dotnet tool install --global dotnet-sonarscanner; }; } && \
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
         
     - name: Verify SonarScanner
       shell: bash
       run: |
-        which dotnet-sonarscanner
-        dotnet-sonarscanner /version
-
+        echo "SonarScanner path: $(which dotnet-sonarscanner)"
+        echo "Version: $(dotnet-sonarscanner --version)"
+        
     - name: Start SonarQube Analysis
       shell: bash
       run: |
@@ -91,7 +92,7 @@ runs:
           /d:sonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}" \
           /d:sonar.verbose="${{ inputs.sonar-verbose }}"
     
-    - name: Build
+    - name: Build Solution
       shell: bash
       run: dotnet build ${{ inputs.sonar-project-name }}.sln --no-restore
     
