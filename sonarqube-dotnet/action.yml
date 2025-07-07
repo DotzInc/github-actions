@@ -67,6 +67,10 @@ runs:
     #   env:
     #     SONAR_TOKEN: ${{ inputs.sonar-token }}
     #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+    - name: Install SonarScanner
+      shell: bash
+      run: dotnet tool install --global dotnet-sonarscanner
+
     - name: Start SonarQube Analysis
       shell: bash
       run: |
@@ -86,7 +90,7 @@ runs:
       shell: bash
       run: |
         dotnet sonarscanner end \
-          /d:sonar.login="${{ inputs.sonar-token }}""
+          /d:sonar.login="${{ inputs.sonar-token }}"
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
