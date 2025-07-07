@@ -92,6 +92,10 @@ runs:
           /d:sonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}" \
           /d:sonar.verbose="${{ inputs.sonar-verbose }}"
     
+    - name: Restore NuGet packages
+      shell: bash
+      run: dotnet restore ${{ inputs.sonar-project-name }}.sln
+    
     - name: Build Solution
       shell: bash
       run: dotnet build ${{ inputs.sonar-project-name }}.sln --no-restore
