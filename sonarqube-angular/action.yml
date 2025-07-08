@@ -62,7 +62,9 @@ runs:
       shell: bash
       run: |
         echo "${{ inputs.sonar-sources }}"
-        cat ${{ inputs.sonar-report-paths }}
+        echo "${{ inputs.sonar-report-paths }}"
+
+        ls -la
 
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
