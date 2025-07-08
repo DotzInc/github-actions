@@ -17,7 +17,7 @@ inputs:
   sonar-exclusions:
     required: false
     type: string
-    default: "**/node_modules/**,**/*.json,**/*.html,**/*.css,**/*.scss,**/environments/**,**/test.ts,**/polyfills.ts,**/main.ts,**/karma.conf.js,**/jest.config.js"
+    default: "**/node_modules/**,**/*.json,**/*.html,**/*.css,**/*.scss,**/environments/**,**/test.ts,**/polyfills.ts,**/main.ts,**/*.spec.ts,**/*.js"
   sonar-source-encoding:
     required: false
     type: string
@@ -26,10 +26,10 @@ inputs:
     required: false
     type: string
     default: "tsconfig.json"
-  sonar-typescript-lcov-report-path:
+  sonar-report-paths:
     required: false
     type: string
-    default: "lcov.info"
+    default: "coverage.xml"
   sonar-host-url:
     required: true
     type: string
@@ -69,10 +69,8 @@ runs:
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
           -Dsonar.sources=${{ inputs.sonar-sources }}
           -Dsonar.tests=${{ inputs.sonar-sources-tests }}
-          -Dsonar.test.inclusions=${{ inputs.sonar-test-inclusions }}
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
-          -Dsonar.typescript.tsconfigPath=${{ inputs.sonar-report-paths }}
-          -Dsonar.typescript.lcov.reportPaths=${{ inputs.sonar-typescript-lcov-report-path }}
+          -Dsonar.typescript.lcov.reportPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
           -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
