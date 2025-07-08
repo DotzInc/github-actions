@@ -58,16 +58,22 @@ runs:
   using: composite
   steps:
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         cache: 'npm'
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
 
     - name: Install SonarScanner
       shell: bash
       run: |
         ls -la
-        npm install -g sonarqube-scanner
+        rm -rf ~/.sonar/cache
+        npm install -g sonarqube-scanner@latest
 
     - name: Run SonarQube Scan
       shell: bash
