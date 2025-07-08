@@ -57,22 +57,21 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Install sonar-scanner globally
-      shell: bash
-      run: npm install -g sonar-scanner
-
-    - name: Validate Coverage XML Angular 2
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@v5.2.0
       continue-on-error: true
-      shell: bash
-      run: |
-        sonar-scanner \
-          -Dsonar.projectKey="${{ inputs.sonar-project-key }}" \
-          -Dsonar.projectName="${{ inputs.sonar-project-key }}" \
-          -Dsonar.sources="${{ inputs.sonar-sources }}" \
-          -Dsonar.host.url="${{ inputs.sonar-host-url }}" \
-          -Dsonar.token="${{ inputs.sonar-token }}" \
-          -Dsonar.typescript.lcov.reportPaths="${{ inputs.sonar-report-paths }}" \
-          -Dsonar.exclusions="${{ inputs.sonar-exclusions }}"
+      with:
+        args: >
+          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
+          -Dsonar.projectName="${{ inputs.sonar-project-key }}"
+          -Dsonar.sources="${{ inputs.sonar-sources }}"
+          -Dsonar.typescript.lcov.reportPaths=${{ inputs.sonar-report-paths }}
+          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
+          -Dsonar.verbose=${{ inputs.sonar-verbose }}
+          -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
+      env:
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
