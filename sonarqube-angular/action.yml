@@ -61,31 +61,41 @@ runs:
       continue-on-error: true
       shell: bash
       run: |
-        echo "${{ inputs.sonar-sources }}"
-        echo "${{ inputs.sonar-report-paths }}"
+        echo "sonar-sources: ${{ inputs.sonar-sources }}"
+        echo "sonar-report-paths: ${{ inputs.sonar-report-paths }}"
+        echo "sonar-project-key: ${{ inputs.sonar-project-key }}"
+        ls -laR
 
-        ls -la
+        npx sonar-scanner \
+          -Dsonar.projectKey="${{ inputs.sonar-project-key }}" \
+          -Dsonar-projectName="${{ inputs.sonar-project-key }}" \
+          -Dsonar.sources="${{ inputs.sonar-sources }}" \
+          -Dsonar.host.url="${{ inputs.sonar-host-url }}" \
+          -Dsonar.token="${{ inputs.sonar-token }}" \
+          -Dsonar.typescript.lcov.reportPaths="${{ inputs.sonar-report-paths }}" \
+          -Dsonar.exclusions="${{ inputs.sonar-exclusions }}"
 
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@v5.2.0
-      continue-on-error: true
-      with:
-        args: >
-          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
-          -Dsonar.sources=${{ inputs.sonar-sources }}
-          -Dsonar.tests=${{ inputs.sonar-sources-tests }}
-          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
-          -Dsonar.typescript.lcov.reportPaths=${{ inputs.sonar-report-paths }}
-          -Dsonar.verbose=${{ inputs.sonar-verbose }}
-          -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
-          -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
-          -Dsonar.scanner.skipSystemTruststore=true
-          -Dsonar.scanner.forceReload=true
-      env:
-        SONAR_TOKEN: ${{ inputs.sonar-token }}
-        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+
+    # - name: SonarQube Scan
+    #   uses: sonarsource/sonarqube-scan-action@v5.2.0
+    #   continue-on-error: true
+    #   with:
+    #     args: >
+    #       -Dsonar.projectKey=${{ inputs.sonar-project-key }}
+    #       -Dsonar.sources=${{ inputs.sonar-sources }}
+    #       -Dsonar.tests=${{ inputs.sonar-sources-tests }}
+    #       -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
+    #       -Dsonar.typescript.lcov.reportPaths=${{ inputs.sonar-report-paths }}
+    #       -Dsonar.verbose=${{ inputs.sonar-verbose }}
+    #       -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
+    #       -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
+    #       -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
+    #       -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
+    #       -Dsonar.scanner.skipSystemTruststore=true
+    #       -Dsonar.scanner.forceReload=true
+    #   env:
+    #     SONAR_TOKEN: ${{ inputs.sonar-token }}
+    #     SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
