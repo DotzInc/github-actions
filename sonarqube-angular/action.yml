@@ -57,18 +57,16 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Install sonar-scanner globally
+      run: npm install -g sonar-scanner
+
     - name: Validate Coverage XML Angular 2
       continue-on-error: true
       shell: bash
       run: |
-        echo "sonar-sources: ${{ inputs.sonar-sources }}"
-        echo "sonar-report-paths: ${{ inputs.sonar-report-paths }}"
-        echo "sonar-project-key: ${{ inputs.sonar-project-key }}"
-        ls -laR
-
-        npx --yes sonar-scanner \
+        sonar-scanner \
           -Dsonar.projectKey="${{ inputs.sonar-project-key }}" \
-          -Dsonar-projectName="${{ inputs.sonar-project-key }}" \
+          -Dsonar.projectName="${{ inputs.sonar-project-key }}" \
           -Dsonar.sources="${{ inputs.sonar-sources }}" \
           -Dsonar.host.url="${{ inputs.sonar-host-url }}" \
           -Dsonar.token="${{ inputs.sonar-token }}" \
