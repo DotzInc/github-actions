@@ -63,16 +63,6 @@ runs:
         node-version: ${{ inputs.node-version }}
         cache: 'npm'
 
-    - name: Install dependencies
-      shell: bash
-      run: npm ci
-
-    - name: Run tests with coverage
-      shell: bash
-      run: | 
-        cd ${{ inputs.sonar-sources }}
-        npm run test -- --code-coverage --watch=false
-
     - name: Install SonarScanner
       shell: bash
       run: |
