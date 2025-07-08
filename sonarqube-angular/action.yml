@@ -95,7 +95,7 @@ runs:
         java -version
         
         # Run sonar-scanner with explicit Java path
-        sonar \
+        npx @sonar/scan \
           -Dsonar.scanner.forceJavaPath=$JAVA_HOME/bin/java \
           -Dsonar.projectKey=${{ inputs.sonar-project-key }} \
           -Dsonar.projectName=${{ inputs.sonar-project-name }} \
