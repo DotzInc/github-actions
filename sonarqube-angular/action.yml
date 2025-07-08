@@ -61,18 +61,17 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: 'npm'
 
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
+        distribution: 'corretto'
         java-version: '17'
 
     - name: Install SonarScanner
       shell: bash
       run: |
         ls -la
-        rm -rf ~/.sonar/cache
         npm install -g sonarqube-scanner@latest
 
     - name: Run SonarQube Scan
