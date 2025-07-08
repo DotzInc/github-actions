@@ -65,15 +65,14 @@ runs:
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
-        distribution: 'corretto'
-        java-version: '11'
+        distribution: 'temurin'
+        java-version: '17'
         
     - name: Run SonarQube Scan
       shell: bash
       run: |
         ls -la
         npx @sonar/scan \
-          -Dsonar.scanner.forceJavaPath=$JAVA_HOME/bin/java \
           -Dsonar.projectKey=${{ inputs.sonar-project-key }} \
           -Dsonar.projectName=${{ inputs.sonar-project-name }} \
           -Dsonar.sources=${{ inputs.sonar-sources }} \
