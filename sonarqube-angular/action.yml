@@ -74,10 +74,29 @@ runs:
         ls -la
         npm install -g sonarqube-scanner@latest
 
+    - name: Debug Java Environment
+      shell: bash
+      run: |
+        echo "JAVA_HOME: $JAVA_HOME"
+        echo "JAVA_HOME_17_X64: $JAVA_HOME_17_X64"
+        ls -la $JAVA_HOME/bin/java || true
+        ls -la /root/.sonar/cache/ || true
+        ls -la /root/.sonar/cache/*_unzip/ || true
+        java -version
+        
     - name: Run SonarQube Scan
       shell: bash
       run: |
+        # Explicitly set Java home
+        export JAVA_HOME=$JAVA_HOME_17_X64
+        export PATH=$JAVA_HOME/bin:$PATH
+        
+        # Verify Java is available
+        java -version
+        
+        # Run sonar-scanner with explicit Java path
         sonar-scanner \
+          -Dsonar.scanner.forceJavaPath=$JAVA_HOME/bin/java \
           -Dsonar.projectKey=${{ inputs.sonar-project-key }} \
           -Dsonar.projectName=${{ inputs.sonar-project-name }} \
           -Dsonar.sources=${{ inputs.sonar-sources }} \
