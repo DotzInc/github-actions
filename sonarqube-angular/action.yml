@@ -57,16 +57,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: ls la
-      shell: bash
-      run: |  
-        echo "-------------------------------------------------"
-        ls -laR
-        
-        echo "-------------------------------------------------"
-        echo "${{ inputs.sonar-sources }}"
-        
-
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       continue-on-error: true
