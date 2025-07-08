@@ -72,7 +72,7 @@ runs:
       shell: bash
       run: |
         ls -la
-        npm install -g sonarqube-scanner@latest
+        npm install -g @sonar/scan
 
     - name: Debug Java Environment
       shell: bash
@@ -95,7 +95,7 @@ runs:
         java -version
         
         # Run sonar-scanner with explicit Java path
-        sonar-scanner \
+        sonar \
           -Dsonar.scanner.forceJavaPath=$JAVA_HOME/bin/java \
           -Dsonar.projectKey=${{ inputs.sonar-project-key }} \
           -Dsonar.projectName=${{ inputs.sonar-project-name }} \
