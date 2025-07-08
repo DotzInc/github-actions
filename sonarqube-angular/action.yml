@@ -66,6 +66,7 @@ runs:
     - name: Install SonarScanner
       shell: bash
       run: |
+        ls -la
         npm install -g sonarqube-scanner
 
     - name: Run SonarQube Scan
