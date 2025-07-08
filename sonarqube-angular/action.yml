@@ -17,7 +17,7 @@ inputs:
   sonar-exclusions:
     required: false
     type: string
-    default: "**/node_modules/**,**/*.json,**/*.html,**/*.css,**/*.scss,**/environments/**,**/test.ts,**/polyfills.ts,**/main.ts,**/*.spec.ts,**/*.js"
+    default: "**/*.html,**/*.css,**/*.scss,**/*.spec.ts,**/*.json,**/*.js"
   sonar-source-encoding:
     required: false
     type: string
