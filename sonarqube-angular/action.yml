@@ -9,7 +9,7 @@ inputs:
   sonar-sources:
     required: false
     type: string
-    default: "src"
+    default: "."
   sonar-test-inclusions:
     required: false
     type: string
