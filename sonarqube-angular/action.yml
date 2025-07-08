@@ -72,7 +72,10 @@ runs:
       shell: bash
       run: |
         ls -la
+        echo "$JAVA_HOME"
+
         npx @sonar/scan \
+          -Dsonar.scanner.disableJreProvisioning=true \
           -Dsonar.projectKey=${{ inputs.sonar-project-key }} \
           -Dsonar.projectName=${{ inputs.sonar-project-name }} \
           -Dsonar.sources=${{ inputs.sonar-sources }} \
@@ -90,7 +93,6 @@ runs:
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
-        SONAR_SCANNER_OPTS: -Djava.home=$JAVA_HOME
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
