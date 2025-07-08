@@ -69,7 +69,9 @@ runs:
 
     - name: Run tests with coverage
       shell: bash
-      run: npm run test -- --code-coverage --watch=false
+      run: | 
+        cd ${{ inputs.sonar-sources }}
+        npm run test -- --code-coverage --watch=false
 
     - name: Install SonarScanner
       shell: bash
