@@ -59,7 +59,13 @@ runs:
   steps:
     - name: ls la
       shell: bash
-      run: ls -laR
+      run: |  
+        echo "-------------------------------------------------"
+        ls -laR
+        
+        echo "-------------------------------------------------"
+        echo "${{ inputs.sonar-sources }}"
+        
 
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
