@@ -58,6 +58,7 @@ runs:
   using: composite
   steps:
     - name: Install sonar-scanner globally
+      shell: bash
       run: npm install -g sonar-scanner
 
     - name: Validate Coverage XML Angular 2
