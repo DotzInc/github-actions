@@ -76,9 +76,6 @@ runs:
 
     - name: Run SonarQube Scan
       shell: bash
-      env:
-        SONAR_TOKEN: ${{ inputs.sonar-token }}
-        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
       run: |
         sonar-scanner \
           -Dsonar.projectKey=${{ inputs.sonar-project-key }} \
@@ -95,6 +92,10 @@ runs:
           -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }} \
           -Dsonar.scanner.skipSystemTruststore=true \
           -Dsonar.scanner.forceReload=true
+      env:
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+        SONAR_SCANNER_OPTS: -Djava.home=$JAVA_HOME
 
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
