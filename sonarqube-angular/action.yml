@@ -66,6 +66,7 @@ runs:
         echo "========================================"
         ls -la accounts-hub
         echo "========================================"
+        cat lcov.info
 
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
