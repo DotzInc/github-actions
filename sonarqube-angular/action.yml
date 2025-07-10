@@ -29,7 +29,7 @@ inputs:
   sonar-report-paths:
     required: false
     type: string
-    default: "coverage.xml"
+    default: "lcov.info"
   sonar-host-url:
     required: true
     type: string
@@ -62,8 +62,9 @@ runs:
       shell: bash
       run: |
         echo "========================================"
-        ls -la accounts-hub
         ls -la 
+        echo "========================================"
+        ls -la accounts-hub
         echo "========================================"
 
     - name: SonarQube Scan
