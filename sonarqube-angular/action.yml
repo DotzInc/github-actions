@@ -1,0 +1,103 @@
+name: 'Sonarqube Angular Scanner'
+description: 'Quality Gate Sonarqube for Angular projects'
+
+inputs:
+  sonar-verbose:
+    required: false
+    type: boolean
+    default: false
+  sonar-sources:
+    required: false
+    type: string
+    default: "."
+  sonar-test-inclusions:
+    required: false
+    type: string
+    default: "**/*.spec.ts"
+  sonar-exclusions:
+    required: false
+    type: string
+    default: "**/*.html,**/*.css,**/*.scss,**/*.spec.ts,**/*.json,**/*.js"
+  sonar-source-encoding:
+    required: false
+    type: string
+    default: "UTF-8"
+  sonar-typescript-tsconfig-path:
+    required: false
+    type: string
+    default: "tsconfig.json"
+  sonar-report-paths:
+    required: false
+    type: string
+    default: "lcov.info"
+  sonar-host-url:
+    required: true
+    type: string
+  sonar-api-token:
+    required: true
+    type: string
+  sonar-token:
+    required: true
+    type: string
+  sonar-project-key:
+    required: true
+    type: string
+  sonar-timeout:
+    required: false
+    type: string
+    default: "300"
+  sonar-project-name:
+    required: true
+    type: string
+  node-version:
+    required: false
+    type: string
+    default: "20.x"
+
+runs:
+  using: composite
+  steps:
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@v5.2.0
+      continue-on-error: true
+      with:
+        args: >
+          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
+          -Dsonar.projectName="${{ inputs.sonar-project-key }}"
+          -Dsonar.sources="${{ inputs.sonar-sources }}"
+          -Dsonar.typescript.lcov.reportPaths=${{ inputs.sonar-report-paths }}
+          -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
+          -Dsonar.verbose=${{ inputs.sonar-verbose }}
+          -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
+      env:
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+
+    - name: Check SonarQube Quality Gate Status
+      id: sonarqube-status
+      shell: bash
+      continue-on-error: true
+      run: ${{ github.action_path }}/sonarqube-status.sh
+      env:
+        SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
+        SONAR_TOKEN: ${{ inputs.sonar-api-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+
+    - name: Get Coverage
+      shell: bash
+      id: coverage-calc
+      if: steps.sonarqube-status.outputs.status == 'OK'
+      continue-on-error: true
+      run: ${{ github.action_path }}/coverage-calc.sh
+
+    - name: Update Quality Gates Sonarqube
+      shell: bash
+      id: quality-gates-sonarqube
+      if: steps.sonarqube-status.outputs.status == 'OK'
+      continue-on-error: true
+      run: ${{ github.action_path }}/quality-gates-sonarqube.sh
+      env:
+        SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
+        SONAR_TOKEN: ${{ inputs.sonar-api-token }}
+        SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+        LEGACY_COV_NUM: ${{ steps.coverage-calc.outputs.coverage }}
