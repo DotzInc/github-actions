@@ -68,6 +68,14 @@ runs:
         echo "========================================"
         cat lcov.info
 
+        echo "Validating lcov.info file..."
+        if [ ! -f lcov.info ]; then
+          echo "Error: lcov.info file not found"
+          exit 1
+        fi
+        head -n 10 lcov.info
+        echo "File exists and seems valid"
+
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
       continue-on-error: true
