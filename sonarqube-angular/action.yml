@@ -85,7 +85,6 @@ runs:
           -Dsonar.projectName="${{ inputs.sonar-project-key }}"
           -Dsonar.sources="${{ inputs.sonar-sources }}"
           -Dsonar.typescript.lcov.reportPaths=${{ inputs.sonar-report-paths }}
-          -Dsonar.coverageReportPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
