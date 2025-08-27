@@ -89,6 +89,46 @@ runs:
           core.setOutput('pr_url', context.payload.pull_request.html_url);
           core.setOutput('tested', tested);
 
+    - name: Get PR Approvers
+      id: get-approvers
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const { owner, repo } = context.repo;
+          const pr_number = context.payload.pull_request.number;
+          
+          const reviews = await github.rest.pulls.listReviews({
+            owner,
+            repo,
+            pull_number: pr_number
+          });
+          
+          const approverMap = new Map();
+          reviews.data.forEach(review => {
+            if (review.state === 'APPROVED') {
+              approverMap.set(review.user.login, {
+                username: review.user.login,
+                avatar_url: review.user.avatar_url,
+                submitted_at: review.submitted_at
+              });
+            } else if (review.state === 'CHANGES_REQUESTED' || review.state === 'DISMISSED') {
+              approverMap.delete(review.user.login);
+            }
+          });
+          
+          const approvers = Array.from(approverMap.values())
+            .sort((a, b) => new Date(a.submitted_at) - new Date(b.submitted_at));
+          
+          let approversList = '';
+          if (approvers.length > 0) {
+            approversList = approvers.map(approver => `• @${approver.username}`).join('\\n');
+          } else {
+            approversList = '• _Nenhum approval encontrado_';
+          }
+          
+          core.setOutput('approvers_list', approversList);
+          core.setOutput('approvers_count', approvers.length.toString());
+
     - name: Create GMUD via API
       shell: bash
       env:
@@ -256,6 +296,19 @@ runs:
                 "type": "mrkdwn",
                 "text": "*Descrição:*\n${{ steps.extract-data.outputs.summary }}"
               }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Responsáveis:*\n• *Dev:* ${{ steps.extract-data.outputs.dev }}\n• *TL:* ${{ steps.extract-data.outputs.tl }}\n• *Team:* ${{ steps.extract-data.outputs.team }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Aprovadores (${{ steps.get-approvers.outputs.approvers_count }}):*\n${{ steps.get-approvers.outputs.approvers_list }}"
+                }
+              ]
             },
             {
               "type": "divider"
