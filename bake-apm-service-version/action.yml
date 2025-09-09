@@ -1,0 +1,29 @@
+name: Bake APM Service Version
+description: Build and push an image that sets ELASTIC_APM_SERVICE_VERSION using Cloud Build
+
+inputs:
+  gcp_region:
+    required: true
+    description: GCP region, e.g., us-central1
+  repository_name:
+    required: true
+    description: Artifact Registry repository name
+  tag_version:
+    required: true
+    description: Value for ELASTIC_APM_SERVICE_VERSION
+  project_id:
+    required: false
+    description: Optional GCP project ID (overrides gcloud config)
+
+runs:
+  using: composite
+  steps:
+    - name: Bake ELASTIC_APM_SERVICE_VERSION into image tag
+      shell: bash
+      run: ${{ github.action_path }}/action.sh
+      env:
+        GCP_REGION: ${{ inputs.gcp_region }}
+        REPOSITORY_NAME: ${{ inputs.repository_name }}
+        TAG_VERSION: ${{ inputs.tag_version }}
+        PROJECT_ID: ${{ inputs.project_id }}
+
