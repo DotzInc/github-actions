@@ -291,11 +291,11 @@ runs:
               "fields": [
                 {
                   "type": "mrkdwn",
-                  "text": "*Repositório:*\n" + $repo
+                  "text": ("*Repositório:*\n" + $repo)
                 },
                 {
                   "type": "mrkdwn",
-                  "text": "*Tipo de Mudança:*\n" + $change_type
+                  "text": ("*Tipo de Mudança:*\n" + $change_type)
                 }
               ]
             },
@@ -303,7 +303,7 @@ runs:
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "*Descrição:*\n" + $summary
+                "text": ("*Descrição:*\n" + $summary)
               }
             },
             {
@@ -311,11 +311,11 @@ runs:
               "fields": [
                 {
                   "type": "mrkdwn",
-                  "text": "*Responsáveis:*\n• *Dev:* " + $dev + "\n• *TL:* " + $tl + "\n• *Team:* " + $team
+                  "text": ("*Responsáveis:*\n• *Dev:* " + $dev + "\n• *TL:* " + $tl + "\n• *Team:* " + $team)
                 },
                 {
                   "type": "mrkdwn",
-                  "text": "*Aprovadores (" + $approvers_count + ") :*\n" + $approvers_list
+                  "text": ("*Aprovadores (" + $approvers_count + "):*\n" + $approvers_list)
                 }
               ]
             },
@@ -332,7 +332,7 @@ runs:
                     "text": "Abrir no GLPI",
                     "emoji": true
                   },
-                  "url": "https://suporte.dotz.com.br/front/change.form.php?id=" + $gmud_id,
+                  "url": ("https://suporte.dotz.com.br/front/change.form.php?id=" + $gmud_id),
                   "style": "primary"
                 },
                 {
