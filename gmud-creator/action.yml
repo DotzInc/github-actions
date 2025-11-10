@@ -348,7 +348,11 @@ runs:
             }
           ]' > slack_blocks.json
 
-        echo "blocks=$(jq -c . slack_blocks.json)" >> "$GITHUB_OUTPUT"
+        BLOCKS=$(jq -c . slack_blocks.json)
+        BLOCKS=${BLOCKS//'%'/'%25'}
+        BLOCKS=${BLOCKS//$'\n'/'%0A'}
+        BLOCKS=${BLOCKS//$'\r'/'%0D'}
+        echo "blocks=$BLOCKS" >> "$GITHUB_OUTPUT"
 
     - name: Send GMUD payload notification
       uses: archive/github-actions-slack@v2.9.0
