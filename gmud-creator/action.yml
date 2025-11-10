@@ -96,13 +96,13 @@ runs:
         script: |
           const { owner, repo } = context.repo;
           const pr_number = context.payload.pull_request.number;
-          
+
           const reviews = await github.rest.pulls.listReviews({
             owner,
             repo,
             pull_number: pr_number
           });
-          
+
           const approverMap = new Map();
           reviews.data.forEach(review => {
             if (review.state === 'APPROVED') {
@@ -115,17 +115,17 @@ runs:
               approverMap.delete(review.user.login);
             }
           });
-          
+
           const approvers = Array.from(approverMap.values())
             .sort((a, b) => new Date(a.submitted_at) - new Date(b.submitted_at));
-          
+
           let approversList = '';
           if (approvers.length > 0) {
             approversList = approvers.map(approver => `• @${approver.username}`).join('\\n');
           } else {
             approversList = '• _Nenhum approval encontrado_';
           }
-          
+
           core.setOutput('approvers_list', approversList);
           core.setOutput('approvers_count', approvers.length.toString());
 
@@ -262,13 +262,22 @@ runs:
           exit 1
         fi
 
-    - name: Send GMUD payload notification
-      uses: archive/github-actions-slack@v2.9.0
-      with:
-        slack-bot-user-oauth-access-token: ${{ inputs.slack_bot_user_oauth_access_token }}
-        slack-channel: ${{ inputs.slack_channel }}
-        slack-blocks: |
-          [
+    - name: Build Slack blocks payload
+      id: build-slack-blocks
+      shell: bash
+      run: |
+        jq -n \
+          --arg repo "${{ github.repository }}" \
+          --arg change_type "${{ steps.extract-data.outputs.change_type }}" \
+          --arg summary "${{ steps.extract-data.outputs.summary }}" \
+          --arg dev "${{ steps.extract-data.outputs.dev }}" \
+          --arg tl "${{ steps.extract-data.outputs.tl }}" \
+          --arg team "${{ steps.extract-data.outputs.team }}" \
+          --arg approvers_count "${{ steps.get-approvers.outputs.approvers_count }}" \
+          --arg approvers_list "${{ steps.get-approvers.outputs.approvers_list }}" \
+          --arg gmud_id "${{ steps.glpi-id.outputs.GMUD_ID }}" \
+          --arg pr_url "${{ steps.extract-data.outputs.pr_url }}" \
+          '[
             {
               "type": "header",
               "text": {
@@ -282,11 +291,11 @@ runs:
               "fields": [
                 {
                   "type": "mrkdwn",
-                  "text": "*Repositório:*\n${{ github.repository }}"
+                  "text": ("*Repositório:*\n" + $repo)
                 },
                 {
                   "type": "mrkdwn",
-                  "text": "*Tipo de Mudança:*\n${{ steps.extract-data.outputs.change_type }}"
+                  "text": ("*Tipo de Mudança:*\n" + $change_type)
                 }
               ]
             },
@@ -294,7 +303,7 @@ runs:
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "*Descrição:*\n${{ steps.extract-data.outputs.summary }}"
+                "text": ("*Descrição:*\n" + $summary)
               }
             },
             {
@@ -302,11 +311,11 @@ runs:
               "fields": [
                 {
                   "type": "mrkdwn",
-                  "text": "*Responsáveis:*\n• *Dev:* ${{ steps.extract-data.outputs.dev }}\n• *TL:* ${{ steps.extract-data.outputs.tl }}\n• *Team:* ${{ steps.extract-data.outputs.team }}"
+                  "text": ("*Responsáveis:*\n• *Dev:* " + $dev + "\n• *TL:* " + $tl + "\n• *Team:* " + $team)
                 },
                 {
                   "type": "mrkdwn",
-                  "text": "*Aprovadores (${{ steps.get-approvers.outputs.approvers_count }}):*\n${{ steps.get-approvers.outputs.approvers_list }}"
+                  "text": ("*Aprovadores (" + $approvers_count + "):*\n" + $approvers_list)
                 }
               ]
             },
@@ -323,7 +332,7 @@ runs:
                     "text": "Abrir no GLPI",
                     "emoji": true
                   },
-                  "url": "https://suporte.dotz.com.br/front/change.form.php?id=${{ steps.glpi-id.outputs.GMUD_ID }}",
+                  "url": ("https://suporte.dotz.com.br/front/change.form.php?id=" + $gmud_id),
                   "style": "primary"
                 },
                 {
@@ -333,8 +342,21 @@ runs:
                     "text": "Ver PR no GitHub",
                     "emoji": true
                   },
-                  "url": "${{ steps.extract-data.outputs.pr_url }}"
+                  "url": $pr_url
                 }
               ]
             }
-          ]
+          ]' > slack_blocks.json
+
+        BLOCKS=$(jq -c . slack_blocks.json)
+        BLOCKS=${BLOCKS//'%'/'%25'}
+        BLOCKS=${BLOCKS//$'\n'/'%0A'}
+        BLOCKS=${BLOCKS//$'\r'/'%0D'}
+        echo "blocks=$BLOCKS" >> "$GITHUB_OUTPUT"
+
+    - name: Send GMUD payload notification
+      uses: archive/github-actions-slack@v2.9.0
+      with:
+        slack-bot-user-oauth-access-token: ${{ inputs.slack_bot_user_oauth_access_token }}
+        slack-channel: ${{ inputs.slack_channel }}
+        slack-blocks: ${{ steps.build-slack-blocks.outputs.blocks }}
