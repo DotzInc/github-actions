@@ -5,7 +5,7 @@ inputs:
   sonar-continue-on-error:
     required: false
     type: boolean
-    default: false
+    default: "false"
   sonar-verbose:
     required: false
     type: boolean
@@ -60,7 +60,7 @@ runs:
   steps:
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v5.2.0
-      continue-on-error: ${{ inputs.sonar-continue-on-error }}
+      continue-on-error: ${{ inputs.sonar-continue-on-error == 'true' }}
       with:
         args: >
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
@@ -84,7 +84,7 @@ runs:
     - name: Check SonarQube Quality Gate Status
       id: sonarqube-status
       shell: bash
-      continue-on-error: ${{ inputs.sonar-continue-on-error }}
+      continue-on-error: ${{ inputs.sonar-continue-on-error == 'true' }}
       run: ${{ github.action_path }}/sonarqube-status.sh
       env:
         SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
@@ -95,14 +95,14 @@ runs:
       shell: bash
       id: coverage-calc
       if: steps.sonarqube-status.outputs.status == 'OK'
-      continue-on-error: ${{ inputs.sonar-continue-on-error }}
+      continue-on-error: ${{ inputs.sonar-continue-on-error == 'true' }}
       run: ${{ github.action_path }}/coverage-calc.sh
 
     - name: Update Quality Gates Sonarqube
       shell: bash
       id: quality-gates-sonarqube
       if: steps.sonarqube-status.outputs.status == 'OK'
-      continue-on-error: ${{ inputs.sonar-continue-on-error }}
+      continue-on-error: ${{ inputs.sonar-continue-on-error == 'true' }}
       run: ${{ github.action_path }}/quality-gates-sonarqube.sh
       env:
         SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
