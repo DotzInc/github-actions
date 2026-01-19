@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
 FILE=./envs/env-dev.yaml
+ALT_FILE=./kenvs/env-dev.yaml
+
+if [[ ! -f "$FILE" ]]; then
+  FILE="$ALT_FILE"
+fi
+
 while IFS= read -r line
 do
   if [[ ! $line =~ ^# ]] && [[ $line =~ [^[:space:]] ]]
