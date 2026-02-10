@@ -1,0 +1,22 @@
+name: 'Resolve Sonar Language'
+description: 'Detect and resolve Sonar language and module based on repository contents.'
+
+inputs:
+  sonar-lang:
+    required: false
+    type: string
+    default: ''
+  sonar-module:
+    required: false
+    type: string
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve Sonar language
+      shell: bash
+      run: ${{ github.action_path }}/action.sh
+      env:
+        SONAR_LANG: ${{ inputs.sonar-lang }}
+        SONAR_MODULE: ${{ inputs.sonar-module }}
