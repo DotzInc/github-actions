@@ -14,6 +14,7 @@ normalize_host_url() {
         echo "::error::SONAR_HOST_URL is empty. Set input sonar-host-url (e.g. https://sonarqube.example.com)."
         exit 1
     fi
+    host="$(echo "$host" | tr -d '[:space:]')"
     host="${host%/}"
     if [[ "$host" != http://* && "$host" != https://* ]]; then
         host="https://$host"
@@ -36,7 +37,7 @@ wait_for_analysis() {
             exit 1
         fi
 
-        if ! task_response=$(curl -s -u "$SONAR_TOKEN:" "$1"); then
+        if ! task_response=$(curl -sS -u "$SONAR_TOKEN:" "$1"); then
             echo "::error::Failed to reach SonarQube CE task URL: $1"
             exit 1
         fi
@@ -63,6 +64,10 @@ SONAR_HOST_URL=$(normalize_host_url "${SONAR_HOST_URL:-}")
 
 if [ -f "$SONAR_REPORT_TASK_FILE" ]; then
     CE_TASK_URL=$(grep -E '^ceTaskUrl=' "$SONAR_REPORT_TASK_FILE" | cut -d= -f2-)
+    REPORT_SERVER_URL=$(grep -E '^serverUrl=' "$SONAR_REPORT_TASK_FILE" | cut -d= -f2-)
+    if [ -n "${REPORT_SERVER_URL:-}" ]; then
+        SONAR_HOST_URL=$(normalize_host_url "$REPORT_SERVER_URL")
+    fi
     if [ -n "${CE_TASK_URL:-}" ]; then
         wait_for_analysis "$CE_TASK_URL"
     else
@@ -75,7 +80,7 @@ else
 fi
 
 if [ -n "$analysis_id" ]; then
-    if ! SONAR_STATUS=$(curl -s -u "$SONAR_TOKEN:" \
+    if ! SONAR_STATUS=$(curl -sS -u "$SONAR_TOKEN:" \
     "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$analysis_id"); then
         echo "::error::Failed to query Quality Gate status by analysisId."
         exit 1
@@ -85,7 +90,7 @@ else
         echo "::error::SONAR_PROJECT_KEY is empty. Set input sonar-project-key."
         exit 1
     fi
-    if ! SONAR_STATUS=$(curl -s -u "$SONAR_TOKEN:" \
+    if ! SONAR_STATUS=$(curl -sS -u "$SONAR_TOKEN:" \
     "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY"); then
         echo "::error::Failed to query Quality Gate status by projectKey."
         exit 1
