@@ -54,6 +54,14 @@ inputs:
     required: false
     type: string
     default: "60"
+  sonar-qualitygate-timeout:
+    required: false
+    type: string
+    default: "300"
+  sonar-qualitygate-poll-interval:
+    required: false
+    type: string
+    default: "5"
 
 runs:
   using: composite
@@ -90,6 +98,8 @@ runs:
         SONAR_PROJECT_KEY: ${{ inputs.sonar-project-key }}
         SONAR_TOKEN: ${{ inputs.sonar-api-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+        SONAR_QG_TIMEOUT: ${{ inputs.sonar-qualitygate-timeout }}
+        SONAR_QG_POLL_INTERVAL: ${{ inputs.sonar-qualitygate-poll-interval }}
 
     - name: Get Coverage
       shell: bash
