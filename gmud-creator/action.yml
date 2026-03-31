@@ -34,7 +34,7 @@ runs:
 
     - name: Extract PR Data
       id: extract-data
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const prBody = context.payload.pull_request.body;
@@ -110,7 +110,7 @@ runs:
 
     - name: Get PR Approvers
       id: get-approvers
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const { owner, repo } = context.repo;
