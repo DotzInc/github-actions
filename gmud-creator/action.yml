@@ -77,7 +77,6 @@ runs:
           const mergedByLogin = context.payload.pull_request?.merged_by?.login || context.actor || 'desconhecido';
           let mergedByDisplay = `@${mergedByLogin}`;
 
-          // Prefer full name when available, with @login preserved for easy identification.
           if (mergedByLogin !== 'desconhecido') {
             try {
               const mergedByUser = await github.rest.users.getByUsername({
