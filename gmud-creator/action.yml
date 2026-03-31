@@ -34,7 +34,7 @@ runs:
 
     - name: Extract PR Data
       id: extract-data
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const prBody = context.payload.pull_request.body;
@@ -74,6 +74,24 @@ runs:
           const team = extractResponsible('Team');
           const approver = extractSection('Aprovador') || 'Não especificado';
 
+          const mergedByLogin = context.payload.pull_request?.merged_by?.login || context.actor || 'desconhecido';
+          let mergedByDisplay = `@${mergedByLogin}`;
+
+          if (mergedByLogin !== 'desconhecido') {
+            try {
+              const mergedByUser = await github.rest.users.getByUsername({
+                username: mergedByLogin
+              });
+
+              const fullName = mergedByUser?.data?.name?.trim();
+              if (fullName) {
+                mergedByDisplay = `${fullName} (@${mergedByLogin})`;
+              }
+            } catch (error) {
+              core.info(`Could not resolve full name for ${mergedByLogin}: ${error.message}`);
+            }
+          }
+
           // Output para os próximos passos
           core.setOutput('change_type', changeType);
           core.setOutput('summary', summary);
@@ -84,6 +102,7 @@ runs:
           core.setOutput('tl', tl);
           core.setOutput('team', team);
           core.setOutput('approver', approver);
+          core.setOutput('merged_by', mergedByDisplay);
           core.setOutput('impact', impact);
           core.setOutput('task_link', task_link);
           core.setOutput('pr_url', context.payload.pull_request.html_url);
@@ -91,7 +110,7 @@ runs:
 
     - name: Get PR Approvers
       id: get-approvers
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const { owner, repo } = context.repo;
@@ -121,7 +140,7 @@ runs:
 
           let approversList = '';
           if (approvers.length > 0) {
-            approversList = approvers.map(approver => `• @${approver.username}`).join('\\n');
+            approversList = approvers.map(approver => `• @${approver.username}`).join('\n');
           } else {
             approversList = '• _Nenhum approval encontrado_';
           }
@@ -275,6 +294,7 @@ runs:
           --arg team "${{ steps.extract-data.outputs.team }}" \
           --arg approvers_count "${{ steps.get-approvers.outputs.approvers_count }}" \
           --arg approvers_list "${{ steps.get-approvers.outputs.approvers_list }}" \
+          --arg merged_by "${{ steps.extract-data.outputs.merged_by }}" \
           --arg gmud_id "${{ steps.glpi-id.outputs.GMUD_ID }}" \
           --arg pr_url "${{ steps.extract-data.outputs.pr_url }}" \
           '[
@@ -318,6 +338,13 @@ runs:
                   "text": ("*Aprovadores (" + $approvers_count + "):*\n" + $approvers_list)
                 }
               ]
+            },
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": ("*Mergeado por:*\n• " + $merged_by)
+              }
             },
             {
               "type": "divider"
