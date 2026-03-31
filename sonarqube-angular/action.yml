@@ -42,6 +42,14 @@ inputs:
   sonar-project-key:
     required: true
     type: string
+  sonar-project-version:
+    required: false
+    type: string
+    default: ""
+  sonar-scm-revision:
+    required: false
+    type: string
+    default: ""
   sonar-timeout:
     required: false
     type: string
@@ -63,12 +71,14 @@ runs:
       with:
         args: >
           -Dsonar.projectKey=${{ inputs.sonar-project-key }}
-          -Dsonar.projectName="${{ inputs.sonar-project-key }}"
+          -Dsonar.projectName="${{ inputs.sonar-project-name }}"
           -Dsonar.sources="${{ inputs.sonar-sources }}"
           -Dsonar.typescript.lcov.reportPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.exclusions=${{ inputs.sonar-exclusions }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
+          -Dsonar.projectVersion=${{ inputs.sonar-project-version }}
+          -Dsonar.scm.revision=${{ inputs.sonar-scm-revision }}
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
         SONAR_HOST_URL: ${{ inputs.sonar-host-url }}

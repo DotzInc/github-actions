@@ -50,6 +50,14 @@ inputs:
   sonar-project-key:
     required: true
     type: string
+  sonar-project-version:
+    required: false
+    type: string
+    default: ""
+  sonar-scm-revision:
+    required: false
+    type: string
+    default: ""
   sonar-timeout:
     required: false
     type: string
@@ -72,6 +80,8 @@ runs:
           -Dsonar.python.coverage.reportPaths=${{ inputs.sonar-report-paths }}
           -Dsonar.verbose=${{ inputs.sonar-verbose }}
           -Dsonar.sourceEncoding=${{ inputs.sonar-source-encoding }}
+          -Dsonar.projectVersion=${{ inputs.sonar-project-version }}
+          -Dsonar.scm.revision=${{ inputs.sonar-scm-revision }}
           -Dsonar.scanner.connectTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.socketTimeout=${{ inputs.sonar-timeout }}
           -Dsonar.scanner.readTimeout=${{ inputs.sonar-timeout }}
