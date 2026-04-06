@@ -1,9 +1,18 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 PROJECT_RESPONSE=$(curl -s -u "$SONAR_TOKEN:" \
 "$SONAR_HOST_URL/api/qualitygates/get_by_project?project=$SONAR_PROJECT_KEY")
 
 QUALITY_GATE_NAME=$(echo "$PROJECT_RESPONSE" | jq -r '.qualityGate.name')
+QUALITY_GATE_IS_DEFAULT=$(echo "$PROJECT_RESPONSE" | jq -r '.qualityGate.default // false')
+
+if [ "$QUALITY_GATE_IS_DEFAULT" = "true" ]; then
+    echo "Quality Gate '$QUALITY_GATE_NAME' is the default gate. Skipping automatic coverage threshold updates."
+    exit 0
+fi
+
 QUALITY_GATE_NAME=$(echo "$QUALITY_GATE_NAME" | jq -sRr @uri)
 
 echo "Quality Gate Name: $QUALITY_GATE_NAME"
