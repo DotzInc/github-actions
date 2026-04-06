@@ -34,6 +34,14 @@ inputs:
   sonar-project-key:
     required: true
     type: string
+  sonar-project-version:
+    required: false
+    type: string
+    default: ""
+  sonar-scm-revision:
+    required: false
+    type: string
+    default: ""
   sonar-timeout:
     required: false
     type: string
@@ -67,13 +75,24 @@ runs:
     - name: Start SonarQube Analysis
       shell: bash
       run: |
-        dotnet-sonarscanner begin \
-        /k:"${{ inputs.sonar-project-key }}" \
-        /n:"${{ inputs.sonar-project-name }}" \
-        /d:sonar.host.url="${{ inputs.sonar-host-url }}" \
-        /d:sonar.login="${{ inputs.sonar-token }}" \
-        /d:sonar.cs.opencover.reportsPaths="${{ inputs.sonar-report-paths }}" \
-        /d:sonar.verbose="${{ inputs.sonar-verbose }}"
+        args=(
+          "/k:${{ inputs.sonar-project-key }}"
+          "/n:${{ inputs.sonar-project-name }}"
+          "/d:sonar.host.url=${{ inputs.sonar-host-url }}"
+          "/d:sonar.login=${{ inputs.sonar-token }}"
+          "/d:sonar.cs.opencover.reportsPaths=${{ inputs.sonar-report-paths }}"
+          "/d:sonar.verbose=${{ inputs.sonar-verbose }}"
+        )
+
+        if [ -n "${{ inputs.sonar-project-version }}" ]; then
+          args+=("/v:${{ inputs.sonar-project-version }}")
+        fi
+
+        if [ -n "${{ inputs.sonar-scm-revision }}" ]; then
+          args+=("/d:sonar.scm.revision=${{ inputs.sonar-scm-revision }}")
+        fi
+
+        dotnet-sonarscanner begin "${args[@]}"
 
     - name: Restore NuGet packages
       shell: bash
