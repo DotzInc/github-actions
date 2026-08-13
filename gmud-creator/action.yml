@@ -154,6 +154,19 @@ runs:
         GLPI_API_URL: ${{ inputs.glpi_api_url }}
         GLPI_APP_TOKEN: ${{ inputs.glpi_app_token }}
         GLPI_USER_TOKEN: ${{ inputs.glpi_user_token }}
+        REPO: ${{ github.repository }}
+        SUMMARY: ${{ steps.extract-data.outputs.summary }}
+        TESTED: ${{ steps.extract-data.outputs.tested }}
+        CONTEXT: ${{ steps.extract-data.outputs.context }}
+        PROBLEM: ${{ steps.extract-data.outputs.problem }}
+        CHANGE: ${{ steps.extract-data.outputs.change }}
+        PR_URL: ${{ steps.extract-data.outputs.pr_url }}
+        TASK_LINK: ${{ steps.extract-data.outputs.task_link }}
+        DEV: ${{ steps.extract-data.outputs.dev }}
+        TL: ${{ steps.extract-data.outputs.tl }}
+        TEAM: ${{ steps.extract-data.outputs.team }}
+        APPROVER: ${{ steps.extract-data.outputs.approver }}
+        IMPACT: ${{ steps.extract-data.outputs.impact }}
       run: |
         echo "Initializing GLPI session at \$GLPI_API_URL/initSession"
         SESSION_RESPONSE=$(curl -s -w "%{http_code}" --max-time 10 -X GET \
@@ -184,37 +197,37 @@ runs:
 
         GMUD_CONTENT=$(cat <<EOF
         <p><strong>Confirmo que foi testado em ambiente de homologação:</strong></p>
-        <p>${{ steps.extract-data.outputs.tested }}</p>
+        <p>$TESTED</p>
         <p><strong>Contexto:</strong></p>
-        <p>${{ steps.extract-data.outputs.context }}</p>
+        <p>$CONTEXT</p>
         <br>
         <p><strong>Problema</strong>:</p>
-        <p>${{ steps.extract-data.outputs.problem }}</p>
+        <p>$PROBLEM</p>
         <br>
         <p><strong>Mudança:</strong></p>
-        <p>${{ steps.extract-data.outputs.change }}</p>
+        <p>$CHANGE</p>
         <br>
         <p><strong>PR(s):</strong></p>
-        <p>${{ steps.extract-data.outputs.pr_url }}</p>
+        <p>$PR_URL</p>
         <br><br>
         <p><strong>Link da task no Azure:</strong></p>
-        <p>${{ steps.extract-data.outputs.task_link }}</p>
+        <p>$TASK_LINK</p>
         <br><br>
         <p><strong>Responsáveis:</strong></p>
-        <p>Dev: ${{ steps.extract-data.outputs.dev }}</p>
-        <p>TL:  ${{ steps.extract-data.outputs.tl }}</p>
-        <p>Team: ${{ steps.extract-data.outputs.team }}</p>
+        <p>Dev: $DEV</p>
+        <p>TL:  $TL</p>
+        <p>Team: $TEAM</p>
         <br><br>
         <p><strong>Aprovador:</strong></p>
-        <p>${{ steps.extract-data.outputs.approver }}</p>
+        <p>$APPROVER</p>
         EOF
         )
 
-        GMUD_JSON=$(jq -n --arg name "[${{ github.repository }}] - ${{ steps.extract-data.outputs.summary }}" \
+        GMUD_JSON=$(jq -n --arg name "[$REPO] - $SUMMARY" \
           --arg content "$GMUD_CONTENT" \
-          --arg dev "${{ steps.extract-data.outputs.dev }}" \
-          --arg tl "${{ steps.extract-data.outputs.tl }}" \
-          --arg impact "${{ steps.extract-data.outputs.impact }}" \
+          --arg dev "$DEV" \
+          --arg tl "$TL" \
+          --arg impact "$IMPACT" \
           '{
             "input": {
               "name": $name,
@@ -284,19 +297,31 @@ runs:
     - name: Build Slack blocks payload
       id: build-slack-blocks
       shell: bash
+      env:
+        REPO: ${{ github.repository }}
+        CHANGE_TYPE: ${{ steps.extract-data.outputs.change_type }}
+        SUMMARY: ${{ steps.extract-data.outputs.summary }}
+        DEV: ${{ steps.extract-data.outputs.dev }}
+        TL: ${{ steps.extract-data.outputs.tl }}
+        TEAM: ${{ steps.extract-data.outputs.team }}
+        APPROVERS_COUNT: ${{ steps.get-approvers.outputs.approvers_count }}
+        APPROVERS_LIST: ${{ steps.get-approvers.outputs.approvers_list }}
+        MERGED_BY: ${{ steps.extract-data.outputs.merged_by }}
+        GMUD_ID: ${{ steps.glpi-id.outputs.GMUD_ID }}
+        PR_URL: ${{ steps.extract-data.outputs.pr_url }}
       run: |
         jq -n \
-          --arg repo "${{ github.repository }}" \
-          --arg change_type "${{ steps.extract-data.outputs.change_type }}" \
-          --arg summary "${{ steps.extract-data.outputs.summary }}" \
-          --arg dev "${{ steps.extract-data.outputs.dev }}" \
-          --arg tl "${{ steps.extract-data.outputs.tl }}" \
-          --arg team "${{ steps.extract-data.outputs.team }}" \
-          --arg approvers_count "${{ steps.get-approvers.outputs.approvers_count }}" \
-          --arg approvers_list "${{ steps.get-approvers.outputs.approvers_list }}" \
-          --arg merged_by "${{ steps.extract-data.outputs.merged_by }}" \
-          --arg gmud_id "${{ steps.glpi-id.outputs.GMUD_ID }}" \
-          --arg pr_url "${{ steps.extract-data.outputs.pr_url }}" \
+          --arg repo "$REPO" \
+          --arg change_type "$CHANGE_TYPE" \
+          --arg summary "$SUMMARY" \
+          --arg dev "$DEV" \
+          --arg tl "$TL" \
+          --arg team "$TEAM" \
+          --arg approvers_count "$APPROVERS_COUNT" \
+          --arg approvers_list "$APPROVERS_LIST" \
+          --arg merged_by "$MERGED_BY" \
+          --arg gmud_id "$GMUD_ID" \
+          --arg pr_url "$PR_URL" \
           '[
             {
               "type": "header",
