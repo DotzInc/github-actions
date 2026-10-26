@@ -38,16 +38,19 @@ runs:
       with:
         script: |
           const prBody = context.payload.pull_request.body;
-          const extractSection = (title) => {
-                  const regex = new RegExp(`### ${title}[\\s\\S]*?\\n([\\s\\S]*?)(?=###|$)`);
-                  const match = prBody.match(regex);
-                  return match
-                    ? match[1]
-                        .trim()
-                        .replace(/^- \[.\]|\*|^[\[\]]|[\[\]]$|\[|\]/g, '')
-                        .trim()
-                    : '';
-                };
+           const extractSection = (title) => {
+                   const escapedTitle = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                   const regex = new RegExp(`### ${escapedTitle}[\\s\\S]*?\\n([\\s\\S]*?)(?=###|$)`);
+                   const match = prBody.match(regex);
+                   return match
+                     ? match[1]
+                         .trim()
+                         .replace(/^- \[.\]|\*|^[\[\]]|[\[\]]$|\[|\]/g, '')
+                         .replace(/"/g, '\\"')
+                         .replace(/'/g, "\\'")
+                         .trim()
+                     : '';
+                 };
 
           function extractResponsible(field) {
             const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*\\[(.*?)\\]`, 'i');
